@@ -22,6 +22,7 @@ const PeopleStatus: React.FC = observer(() => {
     await store.getPeopleByUnit(unitId);
     const peopleData = toJS(store.people);
     setPeopleList(peopleData);
+    console.log("peopleData", peopleData);
   };
   // store异步获取userJWT
   const fetchUserJWT = async (): Promise<any> => {

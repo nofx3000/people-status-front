@@ -8,6 +8,7 @@ import JwtAuth from "../utils/JwtAuth";
 import Login from "../views/Login/Login";
 import Index from "../views/Index/Index";
 import Home from "../views/Home/Home";
+import BasicInfo from "../views/BasicInfo/BasicInfo";
 import PeopleStatus from "../views/PeopleStatus/PeopleStatus";
 
 const router = createHashRouter([
@@ -34,6 +35,10 @@ const router = createHashRouter([
       {
         path: "status",
         element: <PeopleStatus />,
+      },
+      {
+        path: "basicinfo",
+        element: <BasicInfo />,
       },
     ],
   },

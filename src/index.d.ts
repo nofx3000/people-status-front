@@ -20,6 +20,7 @@ interface PersonInfoInter {
   married?: boolean;
   comment?: string;
   records?: RecordInter[];
+  avatar?: string;
 }
 
 interface ProblemInter {
