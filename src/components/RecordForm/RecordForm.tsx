@@ -9,11 +9,13 @@ const { TextArea } = Input;
 interface RecordFormProps {
   fetchPersonRecord: (currentPersonId: number) => void;
   setIsAdding: (isAdding: boolean) => void;
+  currentPersonId: number;
 }
 
 const RecordForm: FC<RecordFormProps> = ({
   fetchPersonRecord,
   setIsAdding,
+  currentPersonId,
 }) => {
   const [problemsList, setProblemsList] = useState<ProblemInter[]>([]);
   const [form] = Form.useForm();
@@ -34,13 +36,13 @@ const RecordForm: FC<RecordFormProps> = ({
     const uploadData: RecordInter = {
       ...values,
       unit_id: (toJS(store.userInfo) as any)["unit_id"],
-      person_id: (toJS(store.userInfo) as any)["id"],
+      person_id: currentPersonId,
     };
     try {
       const res = await axios.post("/record/add", uploadData);
       if (res.status === 200) {
         message.success("添加成功!");
-        fetchPersonRecord((toJS(store.userInfo) as any)["id"]);
+        fetchPersonRecord(currentPersonId);
         form.resetFields();
         setIsAdding(false);
       }

@@ -106,6 +106,7 @@ const PeopleStatus: React.FC = observer(() => {
           <RecordForm
             fetchPersonRecord={fetchPersonRecord}
             setIsAdding={setIsAdding}
+            currentPersonId={currentPersonId}
           />
         </Card>
       ) : null}
