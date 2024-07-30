@@ -139,11 +139,11 @@ const App: React.FC = () => {
                   <CaretRightOutlined
                     style={{
                       color:
-                        record.risk_level === 0
-                          ? "green"
-                          : record.risk_level === 1
+                        record.risk_level === 1
                           ? "#E0A60F"
-                          : "red",
+                          : record.risk_level === 2
+                          ? "red"
+                          : "green",
                     }}
                   />
                 </span>
@@ -151,11 +151,11 @@ const App: React.FC = () => {
                   style={{
                     marginRight: 5,
                     color:
-                      record.risk_level === 0
-                        ? "green"
-                        : record.risk_level === 1
+                      record.risk_level === 1
                         ? "#E0A60F"
-                        : "red",
+                        : record.risk_level === 2
+                        ? "red"
+                        : "green",
                   }}
                 >
                   情况{index + 1}:{record.problem?.name} 程度:
@@ -215,10 +215,6 @@ const App: React.FC = () => {
 
   return (
     <>
-      <div>
-        用户名:{userJWT.username} 单位ID:{userJWT.unit_id} 权限角色:{" "}
-        {userJWT.role}
-      </div>
       <Row>
         <Col span={24}>
           <Card className={style.card}>

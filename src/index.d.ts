@@ -21,14 +21,17 @@ interface PersonInfoInter {
   comment?: string;
   records?: RecordInter[];
   avatar?: string;
+  unit?: UnitInter;
 }
 
 interface ProblemInter {
   id?: number;
   name?: string;
+  record?: RecordInter[];
 }
 
 interface UserInfoInter {
+  id?: number;
   username: string;
   password: string;
   role?: "admin" | "user";
@@ -37,4 +40,9 @@ interface UserInfoInter {
 interface LoginInter {
   username: string;
   password: string;
+}
+
+interface UnitInter {
+  id?: number;
+  name: string;
 }

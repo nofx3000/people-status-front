@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import style from "./menu.module.scss";
 import {
   AppstoreOutlined,
@@ -6,7 +6,7 @@ import {
   EditOutlined,
   OrderedListOutlined,
 } from "@ant-design/icons";
-import { Menu } from "antd";
+import { Menu, Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
@@ -59,7 +59,7 @@ const App: React.FC<React.HTMLAttributes<HTMLDivElement>> = () => {
         onClick={(item) => {
           navigate(item.key);
         }}
-      />
+      ></Menu>
     </>
   );
 };

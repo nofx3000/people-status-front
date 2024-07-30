@@ -1,17 +1,17 @@
-// .header {
-//   height: 10vh !important;
-//   width: 100vw;
-//   background-color: red !important;
-// }
+.header {
+  height: 8vh !important;
+  width: 100vw;
+  // background-color: red !important;
+}
 .sider {
   flex: 0 0 10vw !important;
-  max-width: 10vw !important;
-  height: 100vh;
-  background-color: yellow !important;
+  // max-width: 10vw !important;
+  height: calc(100vh - 8vh) !important;
+  // background-color: yellow !important;
 }
 .content {
   background-color: #fff;
-  padding: 4vh 2vw;
-  height: 100vh;
+  padding: 1vh 1vw;
+  height: calc(100vh - 8vh) !important;
   overflow: scroll;
 }

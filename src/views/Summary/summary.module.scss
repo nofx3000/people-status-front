@@ -1,34 +1,30 @@
-.card {
-  height: 90vh;
+.flexcard {
+  width: 100%;
+  max-width: 50vw;
+  max-height: 60vh;
+  border-radius: 2vh;
+  border: 1px solid rgb(186, 185, 185, 0.5);
+  padding: 1vh;
 }
+
 .title {
   font-size: 2vh;
   color: rgb(54, 53, 53);
   font-weight: 500;
   margin-left: 1vw;
 }
-.table {
-  margin-top: 1vh;
-}
-.dashboard-area {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding-left: 2vw;
-  .ant-card-body {
-    padding: 0 !important;
-  }
+
+.numbercard {
+  height: 15vh;
+  background: linear-gradient(to right, #bc0823, #f04646);
+  color: white;
+  padding: 1vw;
+  border-radius: 10px;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.5);
 }
 
-.dashboard {
-  padding: -50px;
-  display: flex;
-  justify-content: center;
-  height: 28vh;
-
-  p {
-    text-align: center;
-    font-size: 1vh;
-    font-weight: bold;
-  }
+.numberofpeople {
+  font-size: 5vh;
+  text-align: center;
+  line-height: 8vh;
 }
