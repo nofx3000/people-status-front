@@ -10,6 +10,7 @@ import Index from "../views/Index/Index";
 import Home from "../views/Home/Home";
 import BasicInfo from "../views/BasicInfo/BasicInfo";
 import PeopleStatus from "../views/PeopleStatus/PeopleStatus";
+import Summary from "../views/Summary/Summary";
 
 const router = createHashRouter([
   {
@@ -39,6 +40,10 @@ const router = createHashRouter([
       {
         path: "basicinfo",
         element: <BasicInfo />,
+      },
+      {
+        path: "summary",
+        element: <Summary />,
       },
     ],
   },

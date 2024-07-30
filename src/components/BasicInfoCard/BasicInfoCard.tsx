@@ -54,6 +54,7 @@ const App: React.FC<CardProps> = (props: CardProps) => {
     console.log("Success:", values);
   };
   const onEidtFinish = async (values: PersonInfoInter) => {
+    values.avatar = avatarURL ? avatarURL : values.avatar;
     values.id = (props.personinfo as PersonInfoInter).id;
     values.unit_id = props.unit_id; // specify division
     const res = await axios.put("people/edit", values);
@@ -98,6 +99,11 @@ const App: React.FC<CardProps> = (props: CardProps) => {
     if (status === "data") {
       return (
         <div className={style["data-card"]}>
+          <img
+            src={`http://localhost:3000/api/upload/avatar${personinfo.avatar}`}
+            alt="Avatar"
+            style={{ width: "100%", height: "25vh" }}
+          ></img>
           <p>类别：{formatCatagory(personinfo.catagory as number)}</p>
           <p>婚姻状况：{personinfo.married ? "是" : "否"}</p>
           <div className={style["button-area"]}>

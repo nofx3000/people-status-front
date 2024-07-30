@@ -18,11 +18,11 @@ const getBase64 = (img: FileType, callback: (url: string) => void) => {
 const beforeUpload = (file: FileType) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
   if (!isJpgOrPng) {
-    message.error("You can only upload JPG/PNG file!");
+    message.error("只可上传JPG或PNG格式!");
   }
   const isLt2M = file.size / 1024 / 1024 < 2;
   if (!isLt2M) {
-    message.error("Image must smaller than 2MB!");
+    message.error("图片必须小于2MB!");
   }
   return isJpgOrPng && isLt2M;
 };
