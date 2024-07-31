@@ -75,13 +75,13 @@ const Summary: React.FC = () => {
   };
 
   const getLevel = (person: PersonInfoInter) => {
-    let min = -Infinity;
+    let max = -Infinity;
     person.records?.forEach((record) => {
-      if ((record.risk_level as number) > min) {
-        min = record.risk_level as number;
+      if ((record.risk_level as number) > max) {
+        max = record.risk_level as number;
       }
     });
-    return min;
+    return max;
   };
 
   const removeDuplicateRecords = (person: PersonInfoInter) => {
@@ -172,10 +172,10 @@ const Summary: React.FC = () => {
           style={{ height: "88vh" }}
         >
           <div className={style.flexcard} style={{ height: "50%" }}>
-            <Bar></Bar>
+            <Bar unitId={currentUnitId}></Bar>
           </div>
           <div className={style.flexcard} style={{ height: "50%" }}>
-            <Pie></Pie>
+            <Pie unitId={currentUnitId}></Pie>
           </div>
         </Flex>
         <Flex gap="middle" vertical flex={2}>
@@ -195,12 +195,12 @@ const Summary: React.FC = () => {
                 options={unitList}
                 fieldNames={{ label: "name", value: "id" }}
               />
-              <DatePicker
+              {/* <DatePicker
                 onChange={onDateChange}
                 picker="month"
                 placeholder="请选择月份"
                 defaultValue={dayjs(new Date())}
-              />
+              /> */}
             </div>
             <div
               style={{
@@ -250,7 +250,7 @@ const Summary: React.FC = () => {
         </Flex>
         <Flex gap="middle" vertical flex={1}>
           <div className={style.flexcard} style={{ height: "50%" }}>
-            <Line></Line>
+            <Line unitId={currentUnitId}></Line>
           </div>
           <div className={style.flexcard} style={{ height: "50%" }}>
             <Radar unitId={currentUnitId}></Radar>

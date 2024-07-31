@@ -6,10 +6,17 @@ interface RadarProps {
   unitId: number;
 }
 
+interface indicatorInter {
+  name: string;
+  max: number;
+}
+
 const Radar: FC<RadarProps> = ({ unitId }) => {
   const [problemList, setProblemList] = useState<ProblemInter[]>([]);
-  const [value, setValue] = useState<number[]>([]);
-  const [indicator, setIndicator] = useState<any[]>([]);
+  const [value, setValue] = useState<number[]>([
+    4200, 3000, 20000, 35000, 50000, 18000,
+  ]);
+  const [indicator, setIndicator] = useState<indicatorInter[]>([]);
 
   useEffect(() => {
     fetchProblemList();
@@ -17,10 +24,10 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
 
   useEffect(() => {
     const value: number[] = [];
-    const indicator: any[] = [];
+    const indicator: indicatorInter[] = [];
     problemList.forEach((problem) => {
-      const ind = {
-        name: problem.name,
+      const ind: indicatorInter = {
+        name: problem.name as string,
         max: 5,
       };
       indicator.push(ind);
@@ -40,30 +47,54 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
   };
 
   const radar = () => ({
-    title: {
-      text: "Basic Radar Chart",
-    },
-    legend: {
-      data: ["Allocated Budget", "Actual Spending"],
-    },
     radar: {
-      // shape: 'circle',
-      indicator: indicator,
+      // indicator和value不能为空数组，否则会报错“Cannot read properties of undefined (reading 'push')”
+      indicator:
+        indicator.length > 0
+          ? indicator
+          : [
+              { name: "Sales", max: 6500 },
+              { name: "Administration", max: 16000 },
+              { name: "Information Technology", max: 30000 },
+              { name: "Customer Support", max: 38000 },
+              { name: "Development", max: 52000 },
+              { name: "Marketing", max: 25000 },
+            ],
     },
+
     series: [
       {
-        name: "Budget vs spending",
+        name: "Proportion",
         type: "radar",
         data: [
           {
             value: value,
-            name: "Allocated Budget",
+            name: "人数",
           },
         ],
       },
     ],
   });
-  return <ReactECharts option={radar()}></ReactECharts>;
+  return (
+    <>
+      <p
+        style={{
+          fontSize: "1.2vw",
+          textAlign: "center",
+          fontWeight: 800,
+          lineHeight: "1vw",
+          transform: "translate(50%)",
+          position: "absolute",
+        }}
+      >
+        各类问题人数占比图
+      </p>
+      <ReactECharts
+        option={radar()}
+        style={{ transform: "translateY(10%)" }}
+      ></ReactECharts>
+    </>
+  );
 };
 
 export default Radar;
