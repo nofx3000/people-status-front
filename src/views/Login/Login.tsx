@@ -35,7 +35,7 @@ const App: React.FC = () => {
   return (
     <div className={style.bg}>
       <Card className={style.card}>
-        <p className={style.title}>欢迎来到休假管理系统</p>
+        <p className={style.title}>重点关注人员管理系统</p>
         <Form
           name="basic"
           labelCol={{ span: 4 }}

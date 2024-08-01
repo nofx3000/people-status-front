@@ -2,7 +2,34 @@
   height: 8vh !important;
   width: 100vw;
   // background-color: red !important;
+  color: #fff;
+  font-size: 2.5vh;
+  font-weight: 900;
 }
+
+.headerImgBox {
+  height: 8vh;
+  width: 50vw;
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+}
+
+.headerBadge {
+  height: 8vh;
+  width: 8vw;
+}
+
+.headerImg {
+  height: 40vh;
+  position: absolute;
+  right: 0;
+  top: -5vh;
+
+  // height: 8vh !important;
+  // width: 50vw;
+}
+
 .sider {
   flex: 0 0 10vw !important;
   // max-width: 10vw !important;

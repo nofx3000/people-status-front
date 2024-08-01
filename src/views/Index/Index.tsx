@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Button } from "antd";
+import { Layout, Button, Flex } from "antd";
 import style from "./Index.module.scss";
 import { Outlet } from "react-router-dom";
 import Menu from "../../components/Menu/Menu";
@@ -14,7 +14,21 @@ const App: React.FC = () => {
 
   return (
     <Layout>
-      <Header className={style.header}>Header</Header>
+      <Header className={style.header}>
+        <Flex vertical={false}>
+          <img
+            className={style.headerBadge}
+            src={`http://localhost:3000/api/upload/avatar/01.png`}
+          ></img>
+          <div style={{ lineHeight: "8vh" }}>重点关注人员管理系统</div>
+          <div className={style.headerImgBox}>
+            <img
+              className={style.headerImg}
+              src={`http://localhost:3000/api/upload/avatar/03.png`}
+            ></img>
+          </div>
+        </Flex>
+      </Header>
       <Layout>
         <Sider
           className={style.sider}

@@ -215,45 +215,20 @@ const App: React.FC = () => {
 
   return (
     <>
-      <Row>
-        <Col span={24}>
-          <Card className={style.card}>
-            <span className={style.title}>重点关注人员情况一览表</span>
-            <Table
-              columns={columns}
-              dataSource={peopleRecords}
-              className={style.table}
-            />
-          </Card>
-        </Col>
-        <Modal
-          title="编辑"
-          open={isAdding}
-          footer={null}
-          onCancel={handleCancel}
-        >
-          <RecordForm
-            editRecord={editRecord}
-            setIsAdding={setIsAdding}
-            fetchCurrentUnitRecords={fetchCurrentUnitRecords}
-            ref={formRef}
-          ></RecordForm>
-        </Modal>
-        {/* <Col span={6} className={style["dashboard-area"]}>
-          <Card className={style.dashboard}>
-            <p>干部休假率</p>
-            <Progress strokeLinecap="butt" type="circle" percent={60} />
-          </Card>
-          <Card className={style.dashboard}>
-            <p>战士休假率</p>
-            <Progress strokeLinecap="butt" type="circle" percent={60} />
-          </Card>
-          <Card className={style.dashboard}>
-            <p>文职休假率</p>
-            <Progress strokeLinecap="butt" type="circle" percent={60} />
-          </Card>
-        </Col> */}
-      </Row>
+      {/* <span className={style.title}>重点关注人员情况一览表</span> */}
+      <Table
+        columns={columns}
+        dataSource={peopleRecords}
+        className={style.table}
+      />
+      <Modal title="编辑" open={isAdding} footer={null} onCancel={handleCancel}>
+        <RecordForm
+          editRecord={editRecord}
+          setIsAdding={setIsAdding}
+          fetchCurrentUnitRecords={fetchCurrentUnitRecords}
+          ref={formRef}
+        ></RecordForm>
+      </Modal>
     </>
   );
 };

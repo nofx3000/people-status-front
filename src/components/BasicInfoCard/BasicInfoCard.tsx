@@ -137,7 +137,7 @@ const App: React.FC<CardProps> = (props: CardProps) => {
             setStatus("add");
           }}
         >
-          <span className={style.add}>+添加休假人信息</span>
+          <span className={style.add}>+添加</span>
         </div>
       );
     } else {
@@ -203,7 +203,7 @@ const App: React.FC<CardProps> = (props: CardProps) => {
                 </Button>
                 <Popconfirm
                   placement="top"
-                  title="是否放弃添加休假人信息？"
+                  title="是否放弃？"
                   description="放弃后已填信息将被清空！"
                   onConfirm={closeAdding}
                   okText="是"
@@ -244,7 +244,7 @@ const App: React.FC<CardProps> = (props: CardProps) => {
     <div className={`site-card-border-less-wrapper ${style["card-wraper"]}`}>
       <Card
         title={
-          status === "add" || status === "+" ? "添加休假人" : personinfo.name
+          status === "add" || status === "+" ? "添加人员" : personinfo.name
         }
         bordered={false}
         className={style.card}

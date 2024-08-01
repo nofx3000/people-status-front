@@ -5,6 +5,8 @@ import {
   TeamOutlined,
   EditOutlined,
   OrderedListOutlined,
+  AreaChartOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { Menu, Button } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -30,6 +32,8 @@ const stringToIconMap: StringToIconInter = {
   TeamOutlined: <TeamOutlined></TeamOutlined>,
   EditOutlined: <EditOutlined></EditOutlined>,
   OrderedListOutlined: <OrderedListOutlined></OrderedListOutlined>,
+  AreaChartOutlined: <AreaChartOutlined></AreaChartOutlined>,
+  UserOutlined: <UserOutlined></UserOutlined>,
 };
 
 const App: React.FC<React.HTMLAttributes<HTMLDivElement>> = () => {
