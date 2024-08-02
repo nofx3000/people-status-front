@@ -28,10 +28,33 @@ const Summary: React.FC = () => {
   const [personDetail, setPersonDetail] = useState<PersonInfoInter>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [peopleRecords, setPersonRecords] = useState<PersonInfoInter[]>([]);
+  const [numberInCard, setNumberInCard] = useState<any[]>([0, 0, 0]);
 
   useEffect(() => {
     fetchUnitList();
+    fetchPeopleRecordsByUnitId(currentUnitId);
   }, []);
+
+  useEffect(() => {
+    const data: any[] = [
+      { name: "急迫", value: 0 },
+      { name: "重要", value: 0 },
+      { name: "一般", value: 0 },
+    ];
+    peopleRecords.forEach((person) => {
+      const level = getLevel(person);
+      if (level === 2) {
+        data[0].value++;
+      } else if (level === 1) {
+        data[1].value++;
+      } else {
+        data[2].value++;
+      }
+    });
+    console.log("=======", data);
+
+    setNumberInCard(data);
+  }, [peopleRecords]);
 
   const fetchUnitList = async () => {
     const unitList = await axios.get("/unit");
@@ -188,7 +211,7 @@ const Summary: React.FC = () => {
               }}
             >
               <Select
-                // defaultValue="lucy"
+                defaultValue={currentUnitId}
                 placeholder="请选择单位"
                 style={{ width: 120 }}
                 onChange={handleSelectChange}
@@ -215,7 +238,9 @@ const Summary: React.FC = () => {
                 }}
               >
                 红牌人数
-                <div className={style.numberofpeople}>3</div>
+                <div className={style.numberofpeople}>
+                  {numberInCard[0].value}
+                </div>
               </div>
               <div
                 className={style.numbercard}
@@ -224,7 +249,9 @@ const Summary: React.FC = () => {
                 }}
               >
                 黄牌人数
-                <div className={style.numberofpeople}>3</div>
+                <div className={style.numberofpeople}>
+                  {numberInCard[1].value}
+                </div>
               </div>
               <div
                 className={style.numbercard}
@@ -233,7 +260,9 @@ const Summary: React.FC = () => {
                 }}
               >
                 绿牌人数
-                <div className={style.numberofpeople}>3</div>
+                <div className={style.numberofpeople}>
+                  {numberInCard[2].value}
+                </div>
               </div>
             </div>
           </div>
@@ -269,7 +298,7 @@ const Summary: React.FC = () => {
               <img
                 src={`http://localhost:3000/api/upload/avatar${personDetail.avatar}`}
                 alt="Avatar"
-                style={{ width: "15vw", height: "25vh", marginRight: "5vw" }}
+                style={{ width: "15vw", height: "25vh", marginRight: "2vw" }}
               ></img>
             </div>
             <Flex vertical justify="space-around">

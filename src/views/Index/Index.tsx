@@ -11,7 +11,6 @@ const { Header, Sider, Content } = Layout;
 
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(true);
-
   return (
     <Layout>
       <Header className={style.header}>
