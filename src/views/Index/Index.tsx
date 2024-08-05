@@ -19,7 +19,7 @@ const App: React.FC = () => {
             className={style.headerBadge}
             src={`http://localhost:3000/api/upload/avatar/01.png`}
           ></img>
-          <div style={{ lineHeight: "8vh" }}>重点关注人员管理系统</div>
+          <div style={{ lineHeight: "8vh" }}>重点人员动态管理系统</div>
           <div className={style.headerImgBox}>
             <img
               className={style.headerImg}

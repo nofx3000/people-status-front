@@ -47,7 +47,17 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
   };
 
   const radar = () => ({
+    legend: {
+      data: ["本月人数", "上月人数"],
+      bottom: "0",
+    },
     radar: {
+      radius: "70%",
+      axisName: {
+        width: 100,
+        height: 100,
+        overflow: "break",
+      },
       // indicator和value不能为空数组，否则会报错“Cannot read properties of undefined (reading 'push')”
       indicator:
         indicator.length > 0
@@ -66,10 +76,33 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
       {
         name: "Proportion",
         type: "radar",
+        // areaStyle: {
+        //   color: "red",
+        // },
         data: [
           {
-            value: value,
-            name: "人数",
+            // value: value,
+            value: [4, 3, 2, 3, 3, 5, 4, 3, 2, 3, 2, 1, 2],
+            name: "本月人数",
+            areaStyle: { color: "rgba(247, 14, 6, 0.6)" },
+            lineStyle: {
+              color: "rgba(247, 14, 6, 0.6)",
+            },
+            itemStyle: {
+              color: "rgba(247, 14, 6, 0.6)",
+            },
+          },
+          {
+            value: [3, 4, 2, 4, 2, 4, 2, 3, 2, 2, 3, 1, 2],
+            name: "上月人数",
+            areaStyle: { color: "rgba(13, 151, 255, 0.6)" },
+            lineStyle: {
+              color: "rgba(13, 151, 255, 0.6)",
+              type: "dashed",
+            },
+            itemStyle: {
+              color: "rgba(13, 151, 255, 0.6)",
+            },
           },
         ],
       },
@@ -87,7 +120,7 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
           position: "absolute",
         }}
       >
-        各类问题人数占比图
+        各类问题人数环比图
       </p>
       <ReactECharts
         option={radar()}

@@ -32,8 +32,9 @@ interface ProblemInter {
 
 interface UserInfoInter {
   id?: number;
-  username: string;
-  password: string;
+  username?: string;
+  password?: string;
+  unit_id?: number;
   role?: "admin" | "user";
 }
 

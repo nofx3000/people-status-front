@@ -2,25 +2,30 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   Card,
   message,
-  DatePicker,
+  Divider,
   Select,
   Table,
   Modal,
   Button,
   Flex,
 } from "antd";
+import { toJS } from "mobx";
 import dateformat from "dateformat";
+import store from "../../mobx_store/store";
 import ReactECharts from "echarts-for-react"; // Import ECharts
 import type { ColumnsType } from "antd/es/table";
 import { DownOutlined, CaretRightOutlined } from "@ant-design/icons";
 import type { MenuProps, DatePickerProps } from "antd";
 import style from "./summary.module.scss";
+import dateFormat from "dateformat";
 import dayjs from "dayjs";
 import axios from "axios";
 import Bar from "../../components/Charts/Bar";
 import Line from "../../components/Charts/Line";
 import Pie from "../../components/Charts/Pie";
 import Radar from "../../components/Charts/Radar";
+import VerticalBar from "../../components/Charts/VerticalBar";
+import defaultAvatar from "../../images/avatar.jpeg";
 
 const Summary: React.FC = () => {
   const [unitList, setUnitList] = useState<UnitInter[]>([]);
@@ -29,8 +34,17 @@ const Summary: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [peopleRecords, setPersonRecords] = useState<PersonInfoInter[]>([]);
   const [numberInCard, setNumberInCard] = useState<any[]>([0, 0, 0]);
+  const [userJWT, setUserJWT] = useState<UserInfoInter>({});
+
+  const fetchUserJWT = async (): Promise<any> => {
+    await store.getUserJWT();
+    const userJWT = toJS(store.userInfo);
+    setUserJWT(userJWT);
+    return userJWT;
+  };
 
   useEffect(() => {
+    fetchUserJWT();
     fetchUnitList();
     fetchPeopleRecordsByUnitId(currentUnitId);
   }, []);
@@ -186,21 +200,117 @@ const Summary: React.FC = () => {
   return (
     <>
       <Flex gap="middle" vertical={false}>
-        <Flex
-          gap="middle"
-          vertical
-          flex={1}
-          justify="space-between"
-          align="space-between"
-          style={{ height: "88vh" }}
-        >
-          <div className={style.flexcard} style={{ height: "50%" }}>
-            <Bar unitId={currentUnitId}></Bar>
-          </div>
-          <div className={style.flexcard} style={{ height: "50%" }}>
-            <Pie unitId={currentUnitId}></Pie>
-          </div>
-        </Flex>
+        {userJWT.role === "admin" ? (
+          <Flex gap="middle" vertical flex={1} style={{ height: "88vh" }}>
+            <div
+              className={style.flexcard}
+              style={{ height: "100%", maxHeight: "88vh", paddingTop: "0.5vh" }}
+            >
+              <p className={style.summayText}>
+                {dateFormat(new Date(), "yyyy-mm-dd", true)}
+              </p>
+              <p className={style.summayText}>目前大队共有重点人XX</p>
+              <p className={style.summayText}>其中红牌XX、黄牌XX、绿牌XX</p>
+              <p className={style.summayText}>干部XX、文职XX、战士XX</p>
+              {/* <Divider></Divider> */}
+              <VerticalBar></VerticalBar>
+            </div>
+          </Flex>
+        ) : (
+          <Flex
+            gap="middle"
+            vertical
+            flex={1}
+            justify="space-between"
+            align="space-between"
+            style={{ height: "88vh" }}
+          >
+            <div className={style.flexcard} style={{ height: "30%" }}>
+              {/* <Bar unitId={currentUnitId}></Bar> */}
+              <p className={style.summayText}>
+                {dateFormat(new Date(), "yyyy-mm-dd", true)}
+              </p>
+              <p className={style.summayText}>XX单位编制人数XX</p>
+              <p className={style.summayText}>在位人数XX</p>
+              <p className={style.summayText}>重点人总数XX</p>
+              <p className={style.summayText}>
+                红牌人数XX，黄牌人数XX，绿牌人数XX
+              </p>
+              <p className={style.summayText}>
+                干部人数XX，文职人数XX，战士人数XX
+              </p>
+            </div>
+            <div
+              className={style.flexcard}
+              style={{ height: "70%", overflow: "auto" }}
+            >
+              {/* <Pie unitId={currentUnitId}></Pie> */}
+              <p
+                style={{
+                  fontSize: "1.2vw",
+                  textAlign: "center",
+                  fontWeight: 800,
+                  lineHeight: "1vw",
+                }}
+              >
+                思想骨干队伍
+              </p>
+              <Flex vertical justify="space-between" gap="middle">
+                <Flex vertical={false} flex={1} gap="middle">
+                  <img
+                    src={defaultAvatar}
+                    className={style.backboneAvatar}
+                  ></img>
+                  <div>
+                    <p>姓名：XXX</p>
+                    <p>特点：有耐心，乐于助人</p>
+                  </div>
+                </Flex>
+                <Flex vertical={false} flex={1} gap="middle">
+                  <img
+                    src={defaultAvatar}
+                    className={style.backboneAvatar}
+                  ></img>
+                  <div>
+                    <p>姓名：XXX</p>
+                    <p>特点：有耐心，乐于助人</p>
+                  </div>
+                </Flex>
+                <Flex vertical={false} flex={1} gap="middle">
+                  <img
+                    src={defaultAvatar}
+                    className={style.backboneAvatar}
+                  ></img>
+                  <div>
+                    <p>姓名：XXX</p>
+                    <p>特点：有耐心，乐于助人</p>
+                  </div>
+                </Flex>
+                <Flex vertical={false} flex={1} gap="middle">
+                  <img
+                    src={defaultAvatar}
+                    className={style.backboneAvatar}
+                  ></img>
+                  <div>
+                    <p>姓名：XXX</p>
+                    <p>特点：有耐心，乐于助人</p>
+                  </div>
+                </Flex>
+                <Flex vertical={false} flex={1} gap="middle">
+                  <img
+                    src={defaultAvatar}
+                    className={style.backboneAvatar}
+                  ></img>
+                  <div>
+                    <p>姓名：XXX</p>
+                    <p>特点：有耐心，乐于助人</p>
+                  </div>
+                </Flex>
+              </Flex>
+            </div>
+          </Flex>
+        )}
+
         <Flex gap="middle" vertical flex={2}>
           <div className={style.flexcard} style={{ height: "30%" }}>
             <div

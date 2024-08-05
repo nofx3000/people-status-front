@@ -118,7 +118,7 @@ const Line: FC<LineProps> = ({ unitId }) => {
           position: "absolute",
         }}
       >
-        各类问题增长趋势图
+        各类问题变化趋势图
       </p>
       <ReactECharts option={line()}></ReactECharts>
     </>

@@ -12,7 +12,7 @@ import RecordForm from "../../components/RecordForm/RecordForm";
 const PeopleStatus: React.FC = observer(() => {
   //在页面加载完成前调用store中的getProblems方法
   const [peopleList, setPeopleList] = useState<PersonInfoInter[]>([]);
-  const [userJWT, setUserJWT] = useState<any>([]);
+  const [userJWT, setUserJWT] = useState<UserInfoInter>({});
   const [currentPersonId, setCurrentPersonId] = useState<number>(0);
   const [personRecords, setPersonRecords] = useState<RecordInter[]>([]);
   const [isAdding, setIsAdding] = useState<boolean>(false);
@@ -74,7 +74,7 @@ const PeopleStatus: React.FC = observer(() => {
     const res = await axios.delete(`/record/${record_id}`);
     if (res.status === 200) {
       message.success("删除成功");
-      fetchPersonRecord(userJWT["unit_id"]);
+      fetchPersonRecord(userJWT["unit_id"] as number);
     } else {
       message.error("删除失败");
     }
