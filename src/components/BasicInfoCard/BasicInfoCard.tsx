@@ -1,8 +1,11 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Card, Button, Input, Form, Select, Radio, Popconfirm } from "antd";
 import style from "./basicinfo-card.module.scss";
+import store from "../../mobx_store/store";
+import { toJS } from "mobx";
 import axios from "axios";
 import { App as globalAntd } from "antd";
+import { useNavigate } from "react-router-dom";
 import AvatarUpload from "../AvatarUpload/AvatarUpload";
 
 interface CardProps {
@@ -16,11 +19,21 @@ type CardStatus = "data" | "edit" | "add" | "+";
 
 const App: React.FC<CardProps> = (props: CardProps) => {
   const { fetchPeopleData, unit_id } = props;
+  const navigate = useNavigate();
   const staticFunction = globalAntd.useApp();
   const message = staticFunction.message;
   const [status, setStatus] = useState<CardStatus>(
     props.initialStatus as CardStatus
   );
+  const [responsibleList, setResponsibleList] = useState<ResponsibleInter[]>(
+    []
+  );
+
+  useEffect(() => {
+    const responsibleData = toJS(store.responsible);
+    responsibleData && setResponsibleList(responsibleData);
+  }, []);
+
   const [avatarURL, setAvatarURL] = useState<string>("");
 
   const formRef = useRef(null);
@@ -57,7 +70,7 @@ const App: React.FC<CardProps> = (props: CardProps) => {
     values.avatar = avatarURL ? avatarURL : values.avatar;
     values.id = (props.personinfo as PersonInfoInter).id;
     values.unit_id = props.unit_id; // specify division
-    const res = await axios.put("people/edit", values);
+    const res = await axios.put(`people/edit/${values.id}`, values);
     if (res.data.errno) {
       message.error(res.data.message);
       return;
@@ -80,6 +93,11 @@ const App: React.FC<CardProps> = (props: CardProps) => {
     }
     message.success("删除成功");
     fetchPeopleData(unit_id);
+  };
+
+  const onRecordDetailClicked = () => {
+    console.log("onRecordDetailClicked");
+    navigate(`/record-detail/${personinfo.id}`);
   };
 
   const formatCatagory = (catagory: number) => {
@@ -106,7 +124,11 @@ const App: React.FC<CardProps> = (props: CardProps) => {
           ></img>
           <p>类别：{formatCatagory(personinfo.catagory as number)}</p>
           <p>婚姻状况：{personinfo.married ? "是" : "否"}</p>
+          <p>负责人：{personinfo.responsible?.name}</p>
           <div className={style["button-area"]}>
+            <Button type="primary" onClick={onRecordDetailClicked}>
+              详情
+            </Button>
             <Button
               type="primary"
               onClick={() => {
@@ -117,7 +139,7 @@ const App: React.FC<CardProps> = (props: CardProps) => {
             </Button>
             <Popconfirm
               placement="top"
-              title="是否删除休假人信息？"
+              title="是否删除信息？"
               description="删除后将无法恢复！"
               onConfirm={() => {
                 handleDel(personinfo.id as number);
@@ -150,14 +172,7 @@ const App: React.FC<CardProps> = (props: CardProps) => {
             name="basic"
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
-            initialValues={
-              status === "edit"
-                ? personinfo
-                : {
-                    total_holiday: 20,
-                    spent_holiday: 0,
-                  }
-            }
+            initialValues={status === "edit" ? personinfo : {}}
             onFinish={status === "add" ? onAddFinish : onEidtFinish}
             onFinishFailed={status === "add" ? onAddFailed : onEditFailed}
             autoComplete="off"
@@ -180,6 +195,25 @@ const App: React.FC<CardProps> = (props: CardProps) => {
                 <Select.Option value={0}>干部</Select.Option>
                 <Select.Option value={1}>军士</Select.Option>
                 <Select.Option value={2}>文职</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              label="负责人"
+              name="responsible_id"
+              rules={[{ required: true, message: "请选择负责任" }]}
+              className={style["form-item"]}
+            >
+              <Select>
+                {responsibleList
+                  ? responsibleList.map((responsible) => (
+                      <Select.Option
+                        value={responsible.id}
+                        key={responsible.id}
+                      >
+                        {responsible.name}
+                      </Select.Option>
+                    ))
+                  : []}
               </Select>
             </Form.Item>
             <Form.Item

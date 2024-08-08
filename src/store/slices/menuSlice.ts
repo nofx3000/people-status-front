@@ -2,15 +2,6 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState, AppDispatch, AppThunk } from "../store";
 import axios from "axios";
 
-interface MenuItemInter {
-  id: number;
-  label: string;
-  path: string;
-  icon: string;
-  type?: string;
-  children?: any;
-}
-
 export interface MenuState {
   menuList: MenuItemInter[];
 }

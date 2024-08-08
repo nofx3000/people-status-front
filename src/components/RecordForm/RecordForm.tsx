@@ -4,29 +4,17 @@ import axios from "axios";
 import store from "../../mobx_store/store";
 import { Button, Form, Input, Select, Space, Radio, FormInstance } from "antd";
 import { App as globalAntd } from "antd";
-const { TextArea } = Input;
+import { useParams } from "react-router-dom";
 
 interface RecordFormProps {
-  fetchPersonRecord?: (currentPersonId: number) => void;
-  fetchCurrentUnitRecords?: () => void;
+  fetchPersonInfo?: (personid: number) => void;
   setIsAdding: (isAdding: boolean) => void;
-  currentPersonId?: number;
-  editRecord?: RecordInter;
 }
 
 const RecordForm = forwardRef<any, RecordFormProps>(
-  (
-    {
-      fetchPersonRecord,
-      setIsAdding,
-      currentPersonId,
-      fetchCurrentUnitRecords,
-      editRecord,
-    },
-    ref
-  ) => {
-    console.log("editRecordeditRecordeditRecord", editRecord);
-
+  ({ fetchPersonInfo, setIsAdding }, ref) => {
+    const { person_id: string_person_id } = useParams();
+    const person_id = string_person_id ? Number(string_person_id) : 0;
     const [problemsList, setProblemsList] = useState<ProblemInter[]>([]);
     const [form] = Form.useForm();
 
@@ -46,17 +34,14 @@ const RecordForm = forwardRef<any, RecordFormProps>(
       const uploadData: RecordInter = {
         ...values,
         // unit_id: (toJS(store.userInfo) as any)["unit_id"],
-        person_id: currentPersonId ? currentPersonId : editRecord?.person_id,
+
+        person_id: person_id ? person_id : 0,
       };
       try {
         const res = await axios.post("/record/add", uploadData);
         if (res.status === 200) {
           message.success("添加成功!");
-          fetchPersonRecord &&
-            fetchPersonRecord(
-              currentPersonId !== undefined ? currentPersonId : 0
-            );
-          fetchCurrentUnitRecords && fetchCurrentUnitRecords();
+          fetchPersonInfo && fetchPersonInfo(person_id);
           form.resetFields();
           setIsAdding(false);
         }
@@ -88,7 +73,7 @@ const RecordForm = forwardRef<any, RecordFormProps>(
         name="control-hooks"
         onFinish={onFinish}
         style={{ maxWidth: 600 }}
-        initialValues={editRecord ? editRecord : undefined}
+        // initialValues={editRecord ? editRecord : undefined}
       >
         <Form.Item
           name="problem_id"
@@ -100,43 +85,6 @@ const RecordForm = forwardRef<any, RecordFormProps>(
             options={problemsList}
             fieldNames={{ label: "name", value: "id" }}
           ></Select>
-        </Form.Item>
-        <Form.Item
-          name="risk_level"
-          label="问题程度"
-          rules={[{ required: true }]}
-        >
-          <Radio.Group>
-            <Radio value={0} style={{ color: "green" }}>
-              一般
-            </Radio>
-            <Radio value={1} style={{ color: "#E0A60F" }}>
-              重要
-            </Radio>
-            <Radio value={2} style={{ color: "red" }}>
-              急迫
-            </Radio>
-          </Radio.Group>
-        </Form.Item>
-        <Form.Item name="detail" label="具体描述" rules={[{ required: true }]}>
-          <TextArea />
-        </Form.Item>
-        <Form.Item name="measure" label="应对措施" rules={[{ required: true }]}>
-          <TextArea />
-        </Form.Item>
-        <Form.Item
-          name="responsible_id"
-          label="负责人"
-          rules={[{ required: true }]}
-        >
-          <Select
-            placeholder="负责人"
-            options={store.people}
-            fieldNames={{ label: "name", value: "id" }}
-          ></Select>
-        </Form.Item>
-        <Form.Item name="comment" label="备注" rules={[{ required: true }]}>
-          <TextArea />
         </Form.Item>
         <Form.Item {...tailLayout}>
           <Space>

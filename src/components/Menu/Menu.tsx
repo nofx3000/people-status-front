@@ -13,15 +13,6 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { selectMenuList, getMenuListAsync } from "../../store/slices/menuSlice";
-interface MenuItemInter {
-  id: number;
-  label: string;
-  path: string;
-  icon: string | ReactNode;
-  type?: string;
-  children?: any;
-  key?: number;
-}
 
 interface StringToIconInter {
   [IconName: string]: ReactNode;
@@ -45,6 +36,12 @@ const App: React.FC<React.HTMLAttributes<HTMLDivElement>> = () => {
   }, [dispatch]);
   function formatMenuList(menuList: MenuItemInter[]): MenuItemInter[] {
     return menuList.map((item) => {
+      if (item.children && item.children.length <= 0) {
+        item = { ...item, children: undefined };
+      } else if (item.children && item.children.length > 0) {
+        const newChildren = formatMenuList(item.children as MenuItemInter[]);
+        item = { ...item, children: newChildren };
+      }
       return Object.assign({}, item, {
         key: item.path,
         icon: stringToIconMap[item.icon as string],
@@ -61,6 +58,8 @@ const App: React.FC<React.HTMLAttributes<HTMLDivElement>> = () => {
         theme="dark"
         items={formatMenuList(menuList) as any}
         onClick={(item) => {
+          console.log(item);
+
           navigate(item.key);
         }}
       ></Menu>

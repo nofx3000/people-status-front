@@ -5,6 +5,8 @@ class Store {
   @observable people: PersonInfoInter[] = [];
   @observable problems: ProblemInter[] = [];
   @observable userInfo: {} | UserInfoInter = {};
+  @observable responsible: ResponsibleInter[] = [];
+
   // @observable isAdding = false;
   loading = false;
 
@@ -38,6 +40,15 @@ class Store {
       this.people = data.data as PersonInfoInter[];
     } catch (error) {
       console.error("Error fetching people:", error);
+    }
+  }
+  @action
+  async getResponsibleByUnit(unitId: number): Promise<void> {
+    try {
+      const { data } = await axios.get(`/responsible/unit/${unitId}`);
+      this.responsible = data.data as ResponsibleInter[];
+    } catch (error) {
+      console.error("Error fetching responsible:", error);
     }
   }
   // 获取用户jwt数据

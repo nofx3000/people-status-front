@@ -6,16 +6,17 @@ import store from "../../mobx_store/store";
 import { toJS } from "mobx";
 import style from "./home.module.scss";
 import dateformat from "dateformat";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CaretRightOutlined, XFilled } from "@ant-design/icons";
 import RecordForm from "../../components/RecordForm/RecordForm";
+import getPersonLevel from "../../utils/GetPersonRiskLevel";
+import getRecordLevel from "../../utils/GetRecordLevel";
 
 const App: React.FC = () => {
-  const formRef = useRef(null);
   const [userJWT, setUserJWT] = useState<any>([]);
   const [peopleRecords, setPersonRecords] = useState<PersonInfoInter[]>([]);
-  const [isAdding, setIsAdding] = useState<boolean>(false);
-  const [editRecord, setEditRecord] = useState<RecordInter>({});
+  const navigate = useNavigate();
   const staticFunction = globalAntd.useApp();
   const message = staticFunction.message;
 
@@ -27,10 +28,10 @@ const App: React.FC = () => {
     return userJWT;
   };
 
-  const fetchPeopleRecordsByUnitId = async (unit_id: number) => {
+  const fetchPeopleByUnitId = async (unit_id: number) => {
     try {
       const res = await axios.get(
-        `http://localhost:3000/api/record/unit/${unit_id}`
+        `http://localhost:3000/api/people/${unit_id}`
       );
       console.log(res.data.data);
       setPersonRecords(res.data.data);
@@ -39,38 +40,22 @@ const App: React.FC = () => {
     }
   };
 
-  const fetchCurrentUnitRecords = () => {
-    fetchPeopleRecordsByUnitId(userJWT.unit_id);
-  };
-
-  const editRecordHandler = async (record: RecordInter) => {
-    setEditRecord(record);
-    setIsAdding(true);
-    console.log("formRefformRefformRefformRef", formRef);
-  };
-
-  const handleCancel = () => {
-    setIsAdding(false);
-  };
-
-  const getLevel = (person: PersonInfoInter) => {
-    let min = -Infinity;
-    person.records?.forEach((record) => {
-      if ((record.risk_level as number) > min) {
-        min = record.risk_level as number;
-      }
-    });
-    return min;
+  const goToDetail = (person_id: number) => {
+    navigate(`/record-detail/${person_id}`);
   };
 
   const columns: ColumnsType<PersonInfoInter> = [
     {
-      title: "重要程度",
+      title: "重点程度",
       dataIndex: "level",
       key: "level",
-      width: 65,
+      width: 120,
+      defaultSortOrder: "descend",
+      sorter: (a, b) =>
+        getPersonLevel(a.records as RecordInter[]) -
+        getPersonLevel(b.records as RecordInter[]),
       render: (_, person) => {
-        const level = getLevel(person);
+        const level = getPersonLevel(person.records ? person.records : []);
         return (
           <div
             style={{
@@ -134,14 +119,14 @@ const App: React.FC = () => {
         <>
           {(records as RecordInter[]).map((record, index) => {
             return (
-              <div>
+              <div key={index}>
                 <span style={{ marginRight: 5 }}>
                   <CaretRightOutlined
                     style={{
                       color:
-                        record.risk_level === 1
+                        getRecordLevel(record) === 1
                           ? "#E0A60F"
-                          : record.risk_level === 2
+                          : getRecordLevel(record) === 2
                           ? "red"
                           : "green",
                     }}
@@ -151,22 +136,19 @@ const App: React.FC = () => {
                   style={{
                     marginRight: 5,
                     color:
-                      record.risk_level === 1
+                      getRecordLevel(record) === 1
                         ? "#E0A60F"
-                        : record.risk_level === 2
+                        : getRecordLevel(record) === 2
                         ? "red"
                         : "green",
                   }}
                 >
                   情况{index + 1}:{record.problem?.name} 程度:
-                  {record.risk_level === 0
+                  {getRecordLevel(record) === 0
                     ? "一般"
-                    : record.risk_level === 1
+                    : getRecordLevel(record) === 1
                     ? "重要"
                     : "急迫"}
-                </span>
-                <span style={{ marginRight: 5 }}>
-                  记录时间:{dateformat(record.createdAt, "yyyy-mm-dd HH:MM:ss")}
                 </span>
                 <p
                   style={{
@@ -175,30 +157,72 @@ const App: React.FC = () => {
                     marginBottom: 0,
                   }}
                 >
-                  具体情形:{record.detail}
+                  记录时间:{dateformat(record.createdAt, "yyyy-mm-dd HH:MM:ss")}
+                </p>
+                <p
+                  style={{
+                    marginRight: 5,
+                    marginTop: 0,
+                    marginBottom: 0,
+                  }}
+                >
+                  当前情况:
+                  {record.record_Developments?.length === 0
+                    ? "无"
+                    : (
+                        record.record_Developments as RecordDevelopmentInter[]
+                      )[0].detail}
                 </p>
                 <p style={{ marginRight: 5, marginTop: 0, marginBottom: 0 }}>
-                  帮带措施:{record.measure}
+                  帮带措施:
+                  {record.record_Developments?.length === 0
+                    ? "无"
+                    : (
+                        record.record_Developments as RecordDevelopmentInter[]
+                      )[0].measure}
                 </p>
                 <span style={{ marginRight: 5 }}>
-                  责任人:{record.responsible?.name}
+                  备注:
+                  {record.record_Developments?.length === 0
+                    ? "无"
+                    : (
+                        record.record_Developments as RecordDevelopmentInter[]
+                      )[0].comment}
                 </span>
-                <span style={{ marginRight: 5 }}>备注:{record.comment}</span>
-                <div>
-                  <Button
-                    size="small"
-                    onClick={() => {
-                      editRecordHandler(record);
-                    }}
-                  >
-                    编辑
-                  </Button>{" "}
-                  <Button size="small">删除</Button>
-                </div>
               </div>
             );
           })}
         </>
+      ),
+    },
+    {
+      title: "负责人",
+      dataIndex: "responsible",
+      key: "responsible",
+      width: 65,
+      render: (_, person) =>
+        person.responsible?.avatar ? (
+          <img
+            src={`http://localhost:3000/api/upload/avatar${person.responsible?.avatar}`}
+            style={{ width: "8vw", height: "16vh" }}
+          ></img>
+        ) : (
+          <span>无</span>
+        ),
+    },
+    {
+      title: "操作",
+      key: "options",
+      width: 65,
+      render: (_, person) => (
+        <Button
+          size="small"
+          onClick={() => {
+            goToDetail(person.id as number);
+          }}
+        >
+          查看详情及历史
+        </Button>
       ),
     },
   ];
@@ -207,7 +231,7 @@ const App: React.FC = () => {
     const fetchData = async () => {
       const userJWTData = await fetchUserJWT();
       if (userJWTData !== null) {
-        fetchPeopleRecordsByUnitId(userJWTData["unit_id"]);
+        fetchPeopleByUnitId(userJWTData["unit_id"]);
       }
     };
     fetchData();
@@ -215,20 +239,11 @@ const App: React.FC = () => {
 
   return (
     <>
-      {/* <span className={style.title}>重点关注人员情况一览表</span> */}
       <Table
         columns={columns}
         dataSource={peopleRecords}
         className={style.table}
       />
-      <Modal title="编辑" open={isAdding} footer={null} onCancel={handleCancel}>
-        <RecordForm
-          editRecord={editRecord}
-          setIsAdding={setIsAdding}
-          fetchCurrentUnitRecords={fetchCurrentUnitRecords}
-          ref={formRef}
-        ></RecordForm>
-      </Modal>
     </>
   );
 };

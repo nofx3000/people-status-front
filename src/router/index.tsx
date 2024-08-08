@@ -11,6 +11,8 @@ import Home from "../views/Home/Home";
 import BasicInfo from "../views/BasicInfo/BasicInfo";
 import PeopleStatus from "../views/PeopleStatus/PeopleStatus";
 import Summary from "../views/Summary/Summary";
+import Responsible from "../views/Responsible/Responsible";
+import RecordDetail from "../views/RecordDetail/RecordDetail";
 
 const router = createHashRouter([
   {
@@ -42,8 +44,16 @@ const router = createHashRouter([
         element: <BasicInfo />,
       },
       {
+        path: "responsible",
+        element: <Responsible />,
+      },
+      {
         path: "summary",
         element: <Summary />,
+      },
+      {
+        path: "record-detail/:person_id",
+        element: <RecordDetail />,
       },
     ],
   },

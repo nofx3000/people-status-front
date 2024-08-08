@@ -10,8 +10,18 @@ import BasicInfoCard from "../../components/BasicInfoCard/BasicInfoCard";
 
 const App: React.FC = () => {
   const [peopleList, setPeopleList] = useState<PersonInfoInter[]>([]);
+  // const [responsibleList, setPResponsibleList] = useState<ResponsibleInter[]>(
+  //   []
+  // );
   const [userJWT, setUserJWT] = useState<any>([]);
   const [currentPersonId, setCurrentPersonId] = useState<number>(0);
+  // store异步获取responsibleData
+  const fetchResponsibleData = async (unitId: number) => {
+    await store.getResponsibleByUnit(unitId);
+    // const responsibleData = toJS(store.responsible);
+    // setPResponsibleList(responsibleData);
+    // console.log("----responsibleData", responsibleData);
+  };
   // store异步获取peopleData
   const fetchPeopleData = async (unitId: number) => {
     await store.getPeopleByUnit(unitId);
@@ -33,6 +43,7 @@ const App: React.FC = () => {
       const userJWTData = await fetchUserJWT();
       if (userJWTData !== null) {
         fetchPeopleData(userJWTData["unit_id"]);
+        fetchResponsibleData(userJWTData["unit_id"]);
       }
     };
     fetchData();
