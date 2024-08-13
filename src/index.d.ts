@@ -57,6 +57,9 @@ interface UserInfoInter {
   username?: string;
   password?: string;
   role?: "admin" | "user";
+  unit_id?: number;
+  unit?: UnitInter;
+  records?: RecordInter[];
 }
 
 interface LoginInter {
@@ -67,6 +70,7 @@ interface LoginInter {
 interface UnitInter {
   id?: number;
   name: string;
+  people?: PersonInfoInter[];
 }
 
 interface MenuItemInter {

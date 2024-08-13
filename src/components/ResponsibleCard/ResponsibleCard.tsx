@@ -4,6 +4,7 @@ import style from "./responsible-card.module.scss";
 import axios from "axios";
 import { App as globalAntd } from "antd";
 import AvatarUpload from "../AvatarUpload/AvatarUpload";
+import defaultAvatar from "../../images/avatar.jpeg";
 
 interface CardProps {
   unit_id: number;
@@ -90,7 +91,11 @@ const App: React.FC<CardProps> = (props: CardProps) => {
       return (
         <div className={style["data-card"]}>
           <img
-            src={`http://localhost:3000/api/upload/avatar${responsibleinfo.avatar}`}
+            src={
+              responsibleinfo.avatar
+                ? `http://localhost:3000/api/upload/avatar${responsibleinfo.avatar}`
+                : defaultAvatar
+            }
             alt="Avatar"
             style={{ width: "100%", height: "25vh" }}
           ></img>

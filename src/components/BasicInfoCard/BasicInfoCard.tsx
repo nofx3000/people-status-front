@@ -7,6 +7,8 @@ import axios from "axios";
 import { App as globalAntd } from "antd";
 import { useNavigate } from "react-router-dom";
 import AvatarUpload from "../AvatarUpload/AvatarUpload";
+import formatCatagory from "../../utils/FormatCatagory";
+import defaultAvatar from "../../images/avatar.jpeg";
 
 interface CardProps {
   unit_id: number;
@@ -100,25 +102,16 @@ const App: React.FC<CardProps> = (props: CardProps) => {
     navigate(`/record-detail/${personinfo.id}`);
   };
 
-  const formatCatagory = (catagory: number) => {
-    switch (catagory) {
-      case 0:
-        return "干部";
-      case 1:
-        return "军士";
-      case 2:
-        return "文职";
-      default:
-        break;
-    }
-  };
-
   const renderByStatus = (status: CardStatus) => {
     if (status === "data") {
       return (
         <div className={style["data-card"]}>
           <img
-            src={`http://localhost:3000/api/upload/avatar${personinfo.avatar}`}
+            src={
+              personinfo.avatar
+                ? `http://localhost:3000/api/upload/avatar${personinfo.avatar}`
+                : defaultAvatar
+            }
             alt="Avatar"
             style={{ width: "100%", height: "25vh" }}
           ></img>

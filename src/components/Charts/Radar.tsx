@@ -12,8 +12,16 @@ interface indicatorInter {
 }
 
 const Radar: FC<RadarProps> = ({ unitId }) => {
-  const [problemList, setProblemList] = useState<ProblemInter[]>([]);
-  const [value, setValue] = useState<number[]>([
+  const [thisMonthProblemList, setThisMonthProblemList] = useState<
+    ProblemInter[]
+  >([]);
+  const [lastMonthProblemList, setLastMonthProblemList] = useState<
+    ProblemInter[]
+  >([]);
+  const [thisMonthValue, setThisMonthValue] = useState<number[]>([
+    4200, 3000, 20000, 35000, 50000, 18000,
+  ]);
+  const [lastMonthValue, setLastMonthValue] = useState<number[]>([
     4200, 3000, 20000, 35000, 50000, 18000,
   ]);
   const [indicator, setIndicator] = useState<indicatorInter[]>([]);
@@ -23,30 +31,42 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
   }, [unitId]);
 
   useEffect(() => {
-    const value: number[] = [];
+    const thisMonthValue: number[] = [];
+    const lastMonthValue: number[] = [];
     const indicator: indicatorInter[] = [];
-    problemList.forEach((problem) => {
+    thisMonthProblemList.forEach((problem) => {
       const ind: indicatorInter = {
         name: problem.name as string,
         max: 5,
       };
       indicator.push(ind);
-      value.push(problem.record?.length || 0);
+      thisMonthValue.push(problem.record?.length || 0);
     });
-    setValue(value);
+    lastMonthProblemList.forEach((problem) => {
+      lastMonthValue.push(problem.record?.length || 0);
+    });
+    setThisMonthValue(thisMonthValue);
+    setLastMonthValue(lastMonthValue);
     setIndicator(indicator);
-  }, [problemList]);
+  }, [thisMonthProblemList]);
 
   const fetchProblemList = async () => {
     try {
       const res = await axios.get(`/summary/radar/${unitId}`);
-      setProblemList(res.data.data);
+      setThisMonthProblemList(res.data.data.thisMonth);
+      setLastMonthProblemList(res.data.data.lastMonth);
     } catch (err) {
       console.log(err);
     }
   };
 
   const radar = () => ({
+    title: {
+      text: "各类问题人数环比图",
+      textAlign: "left",
+      x: "center",
+      y: "0",
+    },
     legend: {
       data: ["本月人数", "上月人数"],
       bottom: "0",
@@ -81,8 +101,8 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
         // },
         data: [
           {
-            // value: value,
-            value: [4, 3, 2, 3, 3, 5, 4, 3, 2, 3, 2, 1, 2],
+            value: thisMonthValue,
+            // value: [4, 3, 2, 3, 3, 5, 4, 3, 2, 3, 2, 1, 2],
             name: "本月人数",
             areaStyle: { color: "rgba(247, 14, 6, 0.6)" },
             lineStyle: {
@@ -93,7 +113,8 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
             },
           },
           {
-            value: [3, 4, 2, 4, 2, 4, 2, 3, 2, 2, 3, 1, 2],
+            value: lastMonthValue,
+            // value: [3, 4, 2, 4, 2, 4, 2, 3, 2, 2, 3, 1, 2],
             name: "上月人数",
             areaStyle: { color: "rgba(13, 151, 255, 0.6)" },
             lineStyle: {
@@ -110,7 +131,7 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
   });
   return (
     <>
-      <p
+      {/* <p
         style={{
           fontSize: "1.2vw",
           textAlign: "center",
@@ -121,10 +142,10 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
         }}
       >
         各类问题人数环比图
-      </p>
+      </p> */}
       <ReactECharts
         option={radar()}
-        style={{ transform: "translateY(10%)" }}
+        // style={{ transform: "translateY(10%)" }}
       ></ReactECharts>
     </>
   );

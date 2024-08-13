@@ -4,7 +4,7 @@ import { App as globalAntd } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import store from "../../mobx_store/store";
 import { toJS } from "mobx";
-import style from "./home.module.scss";
+import style from "./list.module.scss";
 import dateformat from "dateformat";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";

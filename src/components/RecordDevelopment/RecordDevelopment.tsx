@@ -8,6 +8,7 @@ import axios from "axios";
 interface RecordDevelopmentProps {
   record: RecordInter;
   fetchPersonInfo: (id: number) => void;
+  key: number;
 }
 const { TextArea } = Input;
 
@@ -179,10 +180,14 @@ const RecordDevelopment: React.FC<RecordDevelopmentProps> = ({
         <span style={{ marginRight: "2vw" }}>
           问题类型：{record.problem?.name}
         </span>
+
         {record.is_closed ? (
           <span>已于{dateFormat(record.updatedAt, "yyyy-mm-dd")}完结</span>
         ) : (
           <>
+            <span style={{ marginRight: "2vw" }}>
+              记录时间:{dateFormat(record.updatedAt, "yyyy-mm-dd")}
+            </span>
             <Button
               type="primary"
               onClick={() => {

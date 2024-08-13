@@ -1,101 +1,103 @@
 import React, { FC, useEffect, useState } from "react";
 import ReactECharts from "echarts-for-react"; // Import ECharts
+import axios from "axios";
+import { message } from "antd";
+import getPersonLevel from "../../utils/GetPersonRiskLevel";
+import style from "./charts.module.scss";
 
 interface BarProps {}
 
 const Bar: FC<BarProps> = () => {
-  const posList = [
-    "left",
-    "right",
-    "top",
-    "bottom",
-    "inside",
-    "insideTop",
-    "insideLeft",
-    "insideRight",
-    "insideBottom",
-    "insideTopLeft",
-    "insideTopRight",
-    "insideBottomLeft",
-    "insideBottomRight",
-  ];
-  //   configParameters = {
-  //     rotate: {
-  //       min: -90,
-  //       max: 90
-  //     },
-  //     align: {
-  //       options: {
-  //         left: 'left',
-  //         center: 'center',
-  //         right: 'right'
-  //       }
-  //     },
-  //     verticalAlign: {
-  //       options: {
-  //         top: 'top',
-  //         middle: 'middle',
-  //         bottom: 'bottom'
-  //       }
-  //     },
-  //     position: {
-  //       options: posList.reduce(function (map, pos) {
-  //         map[pos] = pos;
-  //         return map;
-  //       }, {})
-  //     },
-  //     distance: {
-  //       min: 0,
-  //       max: 100
-  //     }
-  //   };
-  //   const config = {
-  //     rotate: 90,
-  //     align: 'left',
-  //     verticalAlign: 'middle',
-  //     position: 'insideBottom',
-  //     distance: 15,
-  //     onChange: function () {
-  //       const labelOption = {
-  //         rotate: config.rotate,
-  //         align: config.align,
-  //         verticalAlign: config.verticalAlign,
-  //         position: config.position,
-  //         distance: config.distance
-  //       };
-  //       myChart.setOption({
-  //         series: [
-  //           {
-  //             label: labelOption
-  //           },
-  //           {
-  //             label: labelOption
-  //           },
-  //           {
-  //             label: labelOption
-  //           },
-  //           {
-  //             label: labelOption
-  //           }
-  //         ]
-  //       });
-  //     }
-  //   };
-  //   const labelOption = {
-  //     show: true,
-  //     position: config.position,
-  //     distance: config.distance,
-  //     align: config.align,
-  //     verticalAlign: config.verticalAlign,
-  //     rotate: config.rotate,
-  //     formatter: '{c}  {name|{a}}',
-  //     fontSize: 16,
-  //     rich: {
-  //       name: {}
-  //     }
-  //   };
+  const [UnitInfo, setUnitInfo] = useState<UnitInter[]>([]);
+  const [cardNumber, setCardNumber] = useState<number[][]>([]);
+  const [catagoryNumber, setCatagoryNumber] = useState<number[][]>([]);
+  useEffect(() => {
+    fetchAllUnit();
+  }, []);
+
+  useEffect(() => {
+    countCardNumber();
+    countCatagoryNumber();
+  }, [UnitInfo]);
+
+  const fetchAllUnit = async () => {
+    try {
+      const res = await axios.get(`http://localhost:3000/api/unit`);
+      setUnitInfo(res.data.data);
+    } catch (err) {
+      message.error("获取数据失败");
+    }
+  };
+
+  const countCardNumber = () => {
+    if (UnitInfo.length === 0)
+      return new Array(UnitInfo.length).fill([0, 0, 0]);
+    const data = new Array(UnitInfo.length);
+    UnitInfo.forEach((unit) => {
+      const unitId = unit.id as number;
+      // 干部0，文职1，战士2
+      const unitCount = [0, 0, 0];
+      unit.people?.forEach((person) => {
+        const level = getPersonLevel(person.records ? person.records : []);
+        if (level === 0) {
+          unitCount[0] += 1;
+        } else if (level === 1) {
+          unitCount[1] += 1;
+        } else if (level === 2) {
+          unitCount[2] += 1;
+        }
+        data[unitId - 1] = unitCount;
+      });
+    });
+    setCardNumber(data);
+  };
+
+  const countCatagoryNumber = () => {
+    if (UnitInfo.length === 0)
+      return new Array(UnitInfo.length).fill([0, 0, 0]);
+    const data = new Array(UnitInfo.length);
+    UnitInfo.forEach((unit) => {
+      const unitId = unit.id as number;
+      const unitCount = [0, 0, 0];
+      unit.people?.forEach((person) => {
+        if (person.catagory === 0) {
+          unitCount[0] += 1;
+        } else if (person.catagory === 1) {
+          unitCount[1] += 1;
+        } else if (person.catagory === 2) {
+          unitCount[2] += 1;
+        }
+        data[unitId - 1] = unitCount;
+      });
+    });
+    setCatagoryNumber(data);
+  };
+
+  const countTotal = () => {
+    let sum = 0;
+    cardNumber.forEach((item) => {
+      sum += item[0] + item[1] + item[2];
+    });
+    return sum;
+  };
+
+  const countCardNumberArray = (array: Array<Array<number>>) => {
+    let newarray = [0, 0, 0];
+    array.forEach((item) => {
+      newarray[0] += item[0];
+      newarray[1] += item[1];
+      newarray[2] += item[2];
+    });
+    return newarray;
+  };
 
   const bar = () => ({
+    title: {
+      text: "各单位问题人员数量图",
+      textAlign: "left",
+      x: "center",
+      y: "10",
+    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -104,32 +106,23 @@ const Bar: FC<BarProps> = () => {
     },
     legend: {
       data: ["绿牌人数", "黄牌人数", "红牌人数"],
+      bottom: "20",
     },
     yAxis: [
       {
         type: "category",
         axisTick: { show: true },
-        data: ["1y", "2y", "3y", "4y", "5y", "6y", "7y"],
+        data: UnitInfo.length > 0 ? UnitInfo.map((unit) => unit.name) : [],
       },
     ],
     xAxis: [
       {
         type: "value",
-        data: [100, 200, 300, 400, 500],
+        // data: [100, 200, 300, 400, 500],
         position: "bottom",
       },
     ],
     series: [
-      // {
-      //   name: "总问题人数",
-      //   type: "bar",
-      //   barGap: 0,
-      //   // label: labelOption,
-      //   emphasis: {
-      //     focus: "series",
-      //   },
-      //   data: [320, 332, 301, 334, 390, 320, 332, 301],
-      // },
       {
         name: "绿牌人数",
         type: "bar",
@@ -137,7 +130,7 @@ const Bar: FC<BarProps> = () => {
         emphasis: {
           focus: "series",
         },
-        data: [220, 182, 191, 234, 290, 220, 182, 191],
+        data: cardNumber.length > 0 ? cardNumber.map((unit) => unit[0]) : [],
         color: "#039B0F",
       },
       {
@@ -147,7 +140,7 @@ const Bar: FC<BarProps> = () => {
         emphasis: {
           focus: "series",
         },
-        data: [150, 232, 201, 154, 190, 150, 232, 201],
+        data: cardNumber.length > 0 ? cardNumber.map((unit) => unit[1]) : [],
         color: "#E0A60F",
       },
       {
@@ -157,24 +150,24 @@ const Bar: FC<BarProps> = () => {
         emphasis: {
           focus: "series",
         },
-        data: [98, 77, 101, 99, 40, 98, 77, 101],
+        data: cardNumber.length > 0 ? cardNumber.map((unit) => unit[2]) : [],
         color: "#c23531",
       },
     ],
   });
+
   return (
     <>
-      <p
-        style={{
-          fontSize: "1.2vw",
-          textAlign: "center",
-          fontWeight: 800,
-          lineHeight: "1vw",
-          transform: "translate(50%)",
-          position: "absolute",
-        }}
-      >
-        各单位问题人员数量图
+      <p className={style.summayText}>目前大队共有重点人{countTotal()}</p>
+      <p className={style.summayText}>
+        其中红牌{countCardNumberArray(cardNumber)[2]}、黄牌
+        {countCardNumberArray(cardNumber)[1]}
+        、绿牌{countCardNumberArray(cardNumber)[0]}
+      </p>
+      <p className={style.summayText}>
+        干部{countCardNumberArray(catagoryNumber)[0]}、文职
+        {countCardNumberArray(catagoryNumber)[1]}、战士
+        {countCardNumberArray(catagoryNumber)[2]}
       </p>
       <ReactECharts
         option={bar()}

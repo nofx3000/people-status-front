@@ -5,63 +5,62 @@ import dateformat from "dateformat";
 import store from "../../mobx_store/store";
 import type { ColumnsType } from "antd/es/table";
 import { CaretRightOutlined } from "@ant-design/icons";
-import type { DatePickerProps } from "antd";
 import style from "./summary.module.scss";
 import dateFormat from "dateformat";
 import axios from "axios";
-import Bar from "../../components/Charts/Bar";
-import Line from "../../components/Charts/Line";
-import Pie from "../../components/Charts/Pie";
 import Radar from "../../components/Charts/Radar";
+import Line from "../../components/Charts/Line";
 import VerticalBar from "../../components/Charts/VerticalBar";
-import defaultAvatar from "../../images/avatar.jpeg";
 import getPersonLevel from "../../utils/GetPersonRiskLevel";
 import getRecordLevel from "../../utils/GetRecordLevel";
+import formatCatagory from "../../utils/FormatCatagory";
 
 const Summary: React.FC = () => {
   const [unitList, setUnitList] = useState<UnitInter[]>([]);
-  const [currentUnitId, setCurrentUnitId] = useState<number>(1);
+  const [responsibleList, setResponsibleList] = useState<ResponsibleInter[]>(
+    []
+  );
+  const [userJWT, setUserJWT] = useState<UserInfoInter>({});
+  const [currentUnitId, setCurrentUnitId] = useState<number>(
+    userJWT.unit_id as number
+  );
   const [personDetail, setPersonDetail] = useState<PersonInfoInter>({});
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [responsibleDetail, setResponsibleDetail] = useState<ResponsibleInter>(
+    {}
+  );
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isResponsibleModalOpen, setIsResponsibleModalOpen] = useState(false);
   const [peopleRecords, setPersonRecords] = useState<PersonInfoInter[]>([]);
   const [numberInCard, setNumberInCard] = useState<any[]>([0, 0, 0]);
-  const [userJWT, setUserJWT] = useState<UserInfoInter>({});
+  const [catagoryInCard, setCatagoryInCard] = useState<any[]>([0, 0, 0]);
+
+  useEffect(() => {
+    fetchUserJWT();
+    fetchUnitList();
+  }, []);
+
+  useEffect(() => {
+    fetchPeopleByUnitId(currentUnitId);
+    fetchResponsibleByUnitId(currentUnitId);
+  }, [currentUnitId]);
+
+  useEffect(() => {
+    countNumberInCard(peopleRecords);
+    countCatagoryInCard(peopleRecords);
+  }, [peopleRecords]);
 
   const fetchUserJWT = async (): Promise<any> => {
     await store.getUserJWT();
     const userJWT = toJS(store.userInfo);
     setUserJWT(userJWT);
+    setCurrentUnitId((userJWT as UserInfoInter).unit_id as number);
     return userJWT;
   };
 
-  useEffect(() => {
-    fetchUserJWT();
-    fetchUnitList();
-    fetchPeopleByUnitId(currentUnitId);
-  }, []);
-
-  useEffect(() => {
-    const data: any[] = [
-      { name: "急迫", value: 0 },
-      { name: "重要", value: 0 },
-      { name: "一般", value: 0 },
-    ];
-    peopleRecords.forEach((person) => {
-      const level = getPersonLevel(person.records ? person.records : []);
-      if (level === 2) {
-        data[0].value++;
-      } else if (level === 1) {
-        data[1].value++;
-      } else {
-        data[2].value++;
-      }
-    });
-    setNumberInCard(data);
-  }, [peopleRecords]);
-
   const fetchUnitList = async () => {
     const unitList = await axios.get("/unit");
-    setUnitList(unitList.data.data);
+    const _unitList = [{ id: 0, name: "大队总览" }, ...unitList.data.data];
+    setUnitList(_unitList);
   };
 
   const fetchPeopleByUnitId = async (unit_id: number) => {
@@ -69,8 +68,18 @@ const Summary: React.FC = () => {
       const res = await axios.get(
         `http://localhost:3000/api/people/${unit_id}`
       );
-      console.log(res.data.data);
       setPersonRecords(res.data.data);
+    } catch (err) {
+      message.error("获取数据失败");
+    }
+  };
+
+  const fetchResponsibleByUnitId = async (unit_id: number) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/api/responsible/unit/${unit_id}`
+      );
+      setResponsibleList(res.data.data);
     } catch (err) {
       message.error("获取数据失败");
     }
@@ -82,32 +91,68 @@ const Summary: React.FC = () => {
   };
 
   const onDetailClick = async (personId: number) => {
-    setIsModalOpen(true);
+    setIsDetailModalOpen(true);
     const personRecord = await axios.get("/people/person/" + personId);
-    console.log("personRecordpersonRecordpersonRecord", personRecord.data.data);
     setPersonDetail(personRecord.data.data);
   };
 
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
+  const openResponsibleModal = (responsible: ResponsibleInter) => {
+    setIsResponsibleModalOpen(true);
+    setResponsibleDetail(responsible);
   };
 
   const removeDuplicateRecords = (person: PersonInfoInter) => {
     const uniqueRecords: PersonInfoInter[] = [];
     const uniqueProblems: Set<string> = new Set();
     // records数组已经是时间降序
-    person.records?.forEach((record: RecordInter) => {
-      if (!uniqueProblems.has((record as any).problem_id)) {
-        uniqueRecords.push(record);
-        uniqueProblems.add((record as any).problem_id);
-      }
-    });
+    person.records &&
+      person.records.forEach((record: RecordInter) => {
+        if (!uniqueProblems.has((record as any).problem_id)) {
+          uniqueRecords.push(record);
+          uniqueProblems.add((record as any).problem_id);
+        }
+      });
     person.records = uniqueRecords;
     return person;
+  };
+
+  const countNumberInCard = (peopleRecords: PersonInfoInter[]) => {
+    const data: any[] = [
+      { name: "急迫", value: 0 },
+      { name: "重要", value: 0 },
+      { name: "一般", value: 0 },
+    ];
+    peopleRecords &&
+      peopleRecords.forEach((person) => {
+        const level = getPersonLevel(person.records ? person.records : []);
+        if (level === 2) {
+          data[0].value++;
+        } else if (level === 1) {
+          data[1].value++;
+        } else {
+          data[2].value++;
+        }
+      });
+    setNumberInCard(data);
+  };
+
+  const countCatagoryInCard = (peopleRecords: PersonInfoInter[]) => {
+    const data: any[] = [
+      { name: "干部", value: 0 },
+      { name: "文职", value: 0 },
+      { name: "战士", value: 0 },
+    ];
+    peopleRecords &&
+      peopleRecords.forEach((person) => {
+        if (person.catagory === 2) {
+          data[2].value++;
+        } else if (person.catagory === 1) {
+          data[1].value++;
+        } else {
+          data[0].value++;
+        }
+      });
+    setCatagoryInCard(data);
   };
 
   const columns: ColumnsType<PersonInfoInter> = [
@@ -186,13 +231,14 @@ const Summary: React.FC = () => {
         }}
       >
         <Select
+          disabled={userJWT.role !== "admin"}
           defaultValue={currentUnitId}
           placeholder="请选择单位"
           style={{ width: 120 }}
           onChange={handleSelectChange}
           options={unitList}
           fieldNames={{ label: "name", value: "id" }}
-        />
+        ></Select>
       </div>
       <div
         style={{
@@ -240,9 +286,6 @@ const Summary: React.FC = () => {
         <p className={style.summayText}>
           {dateFormat(new Date(), "yyyy-mm-dd", true)}
         </p>
-        <p className={style.summayText}>目前大队共有重点人XX</p>
-        <p className={style.summayText}>其中红牌XX、黄牌XX、绿牌XX</p>
-        <p className={style.summayText}>干部XX、文职XX、战士XX</p>
         <VerticalBar></VerticalBar>
       </div>
     </Flex>
@@ -262,11 +305,18 @@ const Summary: React.FC = () => {
         <p className={style.summayText}>
           {dateFormat(new Date(), "yyyy-mm-dd", true)}
         </p>
-        <p className={style.summayText}>XX单位编制人数XX</p>
-        <p className={style.summayText}>在位人数XX</p>
-        <p className={style.summayText}>重点人总数XX</p>
-        <p className={style.summayText}>红牌人数XX，黄牌人数XX，绿牌人数XX</p>
-        <p className={style.summayText}>干部人数XX，文职人数XX，战士人数XX</p>
+        <p className={style.summayText}>{userJWT.unit?.name}编制人数XX</p>
+        <p className={style.summayText}>
+          重点人总数{peopleRecords && peopleRecords.length}, 其中：
+        </p>
+        <p className={style.summayText}>
+          红牌人数{numberInCard[0].value}，黄牌人数{numberInCard[1].value}
+          ，绿牌人数{numberInCard[2].value}
+        </p>
+        <p className={style.summayText}>
+          干部人数{catagoryInCard[0].value}，文职人数{catagoryInCard[1].value}
+          ，战士人数{catagoryInCard[2].value}
+        </p>
       </div>
       <div
         className={style.flexcard}
@@ -284,52 +334,74 @@ const Summary: React.FC = () => {
           思想骨干队伍
         </p>
         <Flex vertical justify="space-between" gap="middle">
-          <Flex vertical={false} flex={1} gap="middle">
-            <img src={defaultAvatar} className={style.backboneAvatar}></img>
-            <div>
-              <p>姓名：XXX</p>
-              <p>特点：有耐心，乐于助人</p>
-            </div>
-          </Flex>
-          <Flex vertical={false} flex={1} gap="middle">
-            <img src={defaultAvatar} className={style.backboneAvatar}></img>
-            <div>
-              <p>姓名：XXX</p>
-              <p>特点：有耐心，乐于助人</p>
-            </div>
-          </Flex>
-          <Flex vertical={false} flex={1} gap="middle">
-            <img src={defaultAvatar} className={style.backboneAvatar}></img>
-            <div>
-              <p>姓名：XXX</p>
-              <p>特点：有耐心，乐于助人</p>
-            </div>
-          </Flex>
-          <Flex vertical={false} flex={1} gap="middle">
-            <img src={defaultAvatar} className={style.backboneAvatar}></img>
-            <div>
-              <p>姓名：XXX</p>
-              <p>特点：有耐心，乐于助人</p>
-            </div>
-          </Flex>
-          <Flex vertical={false} flex={1} gap="middle">
-            <img src={defaultAvatar} className={style.backboneAvatar}></img>
-            <div>
-              <p>姓名：XXX</p>
-              <p>特点：有耐心，乐于助人</p>
-            </div>
-          </Flex>
+          {responsibleList.map((responsible) => {
+            return (
+              <Flex vertical={false} flex={1} gap="middle" key={responsible.id}>
+                <img
+                  src={`http://localhost:3000/api/upload/avatar${responsible.avatar}`}
+                  className={style.backboneAvatar}
+                ></img>
+                <div>
+                  <p>姓名：{responsible.name}</p>
+                  <p>特点：{responsible.description}</p>
+                  <Button
+                    onClick={() => {
+                      openResponsibleModal(responsible);
+                    }}
+                  >
+                    查看帮带对象
+                  </Button>
+                </div>
+              </Flex>
+            );
+          })}
         </Flex>
       </div>
     </Flex>
   );
 
+  const ResponsibleModal = () => (
+    <Modal
+      title="帮带对象"
+      open={isResponsibleModalOpen}
+      onOk={() => {
+        setIsResponsibleModalOpen(false);
+      }}
+      onCancel={() => {
+        setIsResponsibleModalOpen(false);
+      }}
+    >
+      <Flex vertical>
+        {responsibleDetail.people?.map((person) => (
+          <Flex key={person.id}>
+            <div style={{ marginRight: "2vw" }}>
+              <img
+                src={`http://localhost:3000/api/upload/avatar${person.avatar}`}
+                alt="Avatar"
+                style={{ width: "8vw", height: "15vh" }}
+              ></img>
+            </div>
+            <div>
+              <p>姓名:{person.name}</p>
+              <p>类别:{formatCatagory(person.catagory as number)}</p>
+              <p>婚姻状况：{person.married ? "是" : "否"}</p>
+            </div>
+          </Flex>
+        ))}
+      </Flex>
+    </Modal>
+  );
+
   const DetailModal = () => (
     <Modal
       title="详情"
-      open={isModalOpen}
-      onOk={handleOk}
-      onCancel={handleCancel}
+      open={isDetailModalOpen}
+      onOk={() => {
+        setIsDetailModalOpen(false);
+      }}
+      onCancel={() => {
+        setIsDetailModalOpen(false);
+      }}
     >
       <Flex vertical>
         <Flex flex={1} vertical={false}>
@@ -430,6 +502,7 @@ const Summary: React.FC = () => {
       </Flex>
     </Modal>
   );
+
   return (
     <>
       <Flex gap="middle" vertical={false}>
@@ -449,7 +522,7 @@ const Summary: React.FC = () => {
         </Flex>
         <Flex gap="middle" vertical flex={1}>
           <div className={style.flexcard} style={{ height: "50%" }}>
-            {/* <Line unitId={currentUnitId}></Line> */}
+            <Line unitId={currentUnitId}></Line>
           </div>
           <div className={style.flexcard} style={{ height: "50%" }}>
             <Radar unitId={currentUnitId}></Radar>
@@ -457,6 +530,7 @@ const Summary: React.FC = () => {
         </Flex>
       </Flex>
       <DetailModal />
+      <ResponsibleModal />
     </>
   );
 };

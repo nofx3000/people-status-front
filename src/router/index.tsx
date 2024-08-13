@@ -7,7 +7,7 @@ import {
 import JwtAuth from "../utils/JwtAuth";
 import Login from "../views/Login/Login";
 import Index from "../views/Index/Index";
-import Home from "../views/Home/Home";
+import List from "../views/List/List";
 import BasicInfo from "../views/BasicInfo/BasicInfo";
 import PeopleStatus from "../views/PeopleStatus/PeopleStatus";
 import Summary from "../views/Summary/Summary";
@@ -29,11 +29,11 @@ const router = createHashRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="/home"></Navigate>,
+        element: <Navigate to="/summary"></Navigate>,
       },
       {
-        path: "home",
-        element: <Home />,
+        path: "list",
+        element: <List />,
       },
       {
         path: "status",

@@ -5,9 +5,11 @@ import RecordForm from "../../components/RecordForm/RecordForm";
 import RecordDevelopment from "../../components/RecordDevelopment/RecordDevelopment";
 import { useParams } from "react-router-dom";
 import getLevel from "../../utils/GetPersonRiskLevel";
+import { useNavigate } from "react-router-dom";
 
 export default function RecordDetail() {
   const { person_id: string_person_id } = useParams();
+  const navigate = useNavigate();
   const person_id = string_person_id ? Number(string_person_id) : 0;
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [personInfo, setPersonInfo] = useState<PersonInfoInter | null>(null);
@@ -22,6 +24,10 @@ export default function RecordDetail() {
     if (res.status === 200) {
       setPersonInfo(res.data.data);
     }
+  };
+
+  const handlerGoBack = () => {
+    navigate(-1);
   };
 
   const onAddButtonClick = () => {
@@ -139,6 +145,9 @@ export default function RecordDetail() {
   return (
     <>
       <Flex vertical>
+        <Button style={{ width: "10vw" }} onClick={handlerGoBack}>
+          🔙返回上一页
+        </Button>
         <Flex>
           <BasicInfo />
           <Responsible />
@@ -146,11 +155,11 @@ export default function RecordDetail() {
         <AddRecord />
         <div>
           {personInfo &&
-            personInfo.records?.map((record) => (
+            personInfo.records?.map((record, index) => (
               <RecordDevelopment
                 fetchPersonInfo={fetchPersonInfo}
                 record={record}
-                key={record.id}
+                key={index}
               ></RecordDevelopment>
             ))}
         </div>

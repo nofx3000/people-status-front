@@ -7,6 +7,8 @@ import {
   OrderedListOutlined,
   AreaChartOutlined,
   UserOutlined,
+  HeartOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import { Menu, Button } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -25,6 +27,8 @@ const stringToIconMap: StringToIconInter = {
   OrderedListOutlined: <OrderedListOutlined></OrderedListOutlined>,
   AreaChartOutlined: <AreaChartOutlined></AreaChartOutlined>,
   UserOutlined: <UserOutlined></UserOutlined>,
+  HeartOutlined: <HeartOutlined />,
+  LogoutOutlined: <LogoutOutlined />,
 };
 
 const App: React.FC<React.HTMLAttributes<HTMLDivElement>> = () => {
@@ -53,7 +57,7 @@ const App: React.FC<React.HTMLAttributes<HTMLDivElement>> = () => {
     <>
       <Menu
         className={style.menu}
-        defaultSelectedKeys={["/home"]}
+        defaultSelectedKeys={["/summary"]}
         mode="inline"
         theme="dark"
         items={formatMenuList(menuList) as any}
