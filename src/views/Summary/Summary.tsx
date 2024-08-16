@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { message, Select, Table, Modal, Button, Flex } from "antd";
+import { message, Select, Table, Modal, Button, Flex, Statistic } from "antd";
 import { toJS } from "mobx";
 import dateformat from "dateformat";
 import store from "../../mobx_store/store";
@@ -14,6 +14,7 @@ import VerticalBar from "../../components/Charts/VerticalBar";
 import getPersonLevel from "../../utils/GetPersonRiskLevel";
 import getRecordLevel from "../../utils/GetRecordLevel";
 import formatCatagory from "../../utils/FormatCatagory";
+import defaultAvatar from "../../images/avatar.jpeg";
 
 const Summary: React.FC = () => {
   const [unitList, setUnitList] = useState<UnitInter[]>([]);
@@ -157,10 +158,10 @@ const Summary: React.FC = () => {
 
   const columns: ColumnsType<PersonInfoInter> = [
     {
-      title: "重要程度",
+      title: "程度",
       dataIndex: "level",
       key: "level",
-      width: 30,
+      // width: 30,
       defaultSortOrder: "descend",
       sorter: (a, b) =>
         getPersonLevel(a.records as RecordInter[]) -
@@ -170,11 +171,11 @@ const Summary: React.FC = () => {
         return (
           <div
             style={{
-              width: "6vw",
-              height: "5vh",
+              width: "4vw",
+              height: "4vh",
               borderRadius: "1vh",
               backgroundColor:
-                level === 0 ? "green" : level === 1 ? "#E0A60F" : "red",
+                level === 0 ? "green" : level === 1 ? "#E0A60F" : "#c23531",
             }}
           />
         );
@@ -192,7 +193,7 @@ const Summary: React.FC = () => {
       render: (_, person) => <span>{person.unit?.name}</span>,
     },
     {
-      title: "人员类型",
+      title: "类型",
       dataIndex: "catagory",
       key: "catagory",
       render: (_, person) => (
@@ -206,6 +207,23 @@ const Summary: React.FC = () => {
       ),
     },
     {
+      title: "涉及问题",
+      dataIndex: "problem",
+      key: "problem",
+      render: (_, person) => {
+        if (!person.records) return <p>无</p>;
+        return (
+          <div>
+            {person.records.map((record, index) => (
+              <p style={{ lineHeight: "2vh", marginBottom: 1, marginTop: 1 }}>
+                •{record.problem?.name}
+              </p>
+            ))}
+          </div>
+        );
+      },
+    },
+    {
       title: "操作",
       dataIndex: "option",
       key: "option",
@@ -215,7 +233,7 @@ const Summary: React.FC = () => {
             onDetailClick(person.id as number);
           }}
         >
-          查看详情
+          详情
         </Button>
       ),
     },
@@ -281,11 +299,68 @@ const Summary: React.FC = () => {
     <Flex gap="middle" vertical flex={1} style={{ height: "88vh" }}>
       <div
         className={style.flexcard}
-        style={{ height: "100%", maxHeight: "88vh", paddingTop: "0.5vh" }}
+        // style={{ height: "100%", maxHeight: "88vh", paddingTop: "0.5vh" }}
+        style={{ height: "30%" }}
       >
         <p className={style.summayText}>
           {dateFormat(new Date(), "yyyy-mm-dd", true)}
         </p>
+        <Flex vertical={false} justify="space-around">
+          <Flex vertical flex={1} align="center">
+            <Statistic
+              title="重点人总数"
+              value={9}
+              valueStyle={{
+                color: "#007DFA",
+                fontSize: "2.5vw",
+                fontWeight: "600",
+                lineHeight: "3vw",
+                textAlign: "center",
+              }}
+            />
+            <Statistic
+              title="问题总数"
+              value={17}
+              valueStyle={{
+                color: "#007DFA",
+                fontSize: "2.5vw",
+                fontWeight: "600",
+                lineHeight: "3vw",
+                textAlign: "center",
+              }}
+            />
+          </Flex>
+          <div style={{ borderRight: "2px solid #f0f0f0" }}></div>
+          <Flex vertical flex={1} align="center">
+            <Statistic
+              title="挂牌人数"
+              value={9}
+              valueStyle={{
+                color: "#007DFA",
+                fontSize: "2.5vw",
+                fontWeight: "600",
+                lineHeight: "3vw",
+                textAlign: "center",
+              }}
+            />
+            <Statistic
+              title="摘牌人数"
+              value={0}
+              valueStyle={{
+                color: "#007DFA",
+                fontSize: "2.5vw",
+                fontWeight: "600",
+                lineHeight: "3vw",
+                textAlign: "center",
+              }}
+            />
+          </Flex>
+        </Flex>
+      </div>
+      <div
+        className={style.flexcard}
+        style={{ height: "70%", overflow: "auto" }}
+      >
         <VerticalBar></VerticalBar>
       </div>
     </Flex>
@@ -305,18 +380,57 @@ const Summary: React.FC = () => {
         <p className={style.summayText}>
           {dateFormat(new Date(), "yyyy-mm-dd", true)}
         </p>
-        <p className={style.summayText}>{userJWT.unit?.name}编制人数XX</p>
-        <p className={style.summayText}>
-          重点人总数{peopleRecords && peopleRecords.length}, 其中：
-        </p>
-        <p className={style.summayText}>
-          红牌人数{numberInCard[0].value}，黄牌人数{numberInCard[1].value}
-          ，绿牌人数{numberInCard[2].value}
-        </p>
-        <p className={style.summayText}>
-          干部人数{catagoryInCard[0].value}，文职人数{catagoryInCard[1].value}
-          ，战士人数{catagoryInCard[2].value}
-        </p>
+        <Flex vertical={false} justify="space-around">
+          <Flex vertical flex={1} align="center">
+            <Statistic
+              title="重点人总数"
+              value={9}
+              valueStyle={{
+                color: "#007DFA",
+                fontSize: "2.5vw",
+                fontWeight: "600",
+                lineHeight: "3vw",
+                textAlign: "center",
+              }}
+            />
+            <Statistic
+              title="摘牌人数"
+              value={2}
+              valueStyle={{
+                color: "#007DFA",
+                fontSize: "2.5vw",
+                fontWeight: "600",
+                lineHeight: "3vw",
+                textAlign: "center",
+              }}
+            />
+          </Flex>
+          <div style={{ borderRight: "2px solid #f0f0f0" }}></div>
+          <Flex vertical flex={1} align="center">
+            <Statistic
+              title="留存问题数"
+              value={17}
+              valueStyle={{
+                color: "#007DFA",
+                fontSize: "2.5vw",
+                fontWeight: "600",
+                lineHeight: "3vw",
+                textAlign: "center",
+              }}
+            />
+            <Statistic
+              title="解决问题数"
+              value={0}
+              valueStyle={{
+                color: "#007DFA",
+                fontSize: "2.5vw",
+                fontWeight: "600",
+                lineHeight: "3vw",
+                textAlign: "center",
+              }}
+            />
+          </Flex>
+        </Flex>
       </div>
       <div
         className={style.flexcard}
@@ -331,14 +445,18 @@ const Summary: React.FC = () => {
             lineHeight: "1vw",
           }}
         >
-          思想骨干队伍
+          骨干队伍
         </p>
         <Flex vertical justify="space-between" gap="middle">
           {responsibleList.map((responsible) => {
             return (
               <Flex vertical={false} flex={1} gap="middle" key={responsible.id}>
                 <img
-                  src={`http://localhost:3000/api/upload/avatar${responsible.avatar}`}
+                  src={
+                    responsible.avatar
+                      ? `http://localhost:3000/api/upload/avatar${responsible.avatar}`
+                      : defaultAvatar
+                  }
                   className={style.backboneAvatar}
                 ></img>
                 <div>
@@ -376,7 +494,11 @@ const Summary: React.FC = () => {
           <Flex key={person.id}>
             <div style={{ marginRight: "2vw" }}>
               <img
-                src={`http://localhost:3000/api/upload/avatar${person.avatar}`}
+                src={
+                  person.avatar
+                    ? `http://localhost:3000/api/upload/avatar${person.avatar}`
+                    : defaultAvatar
+                }
                 alt="Avatar"
                 style={{ width: "8vw", height: "15vh" }}
               ></img>

@@ -64,8 +64,11 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
     title: {
       text: "各类问题人数环比图",
       textAlign: "left",
-      x: "center",
-      y: "0",
+      textStyle: {
+        fontSize: 16,
+      },
+      // x: "center",
+      // y: "0",
     },
     legend: {
       data: ["本月人数", "上月人数"],
@@ -73,6 +76,7 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
     },
     radar: {
       radius: "70%",
+      center: ["50%", "53%"],
       axisName: {
         width: 100,
         height: 100,
@@ -143,10 +147,7 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
       >
         各类问题人数环比图
       </p> */}
-      <ReactECharts
-        option={radar()}
-        // style={{ transform: "translateY(10%)" }}
-      ></ReactECharts>
+      <ReactECharts option={radar()} style={{ height: "100%" }}></ReactECharts>
     </>
   );
 };

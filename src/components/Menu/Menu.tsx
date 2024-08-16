@@ -9,6 +9,7 @@ import {
   UserOutlined,
   HeartOutlined,
   LogoutOutlined,
+  FullscreenOutlined,
 } from "@ant-design/icons";
 import { Menu, Button } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -29,6 +30,7 @@ const stringToIconMap: StringToIconInter = {
   UserOutlined: <UserOutlined></UserOutlined>,
   HeartOutlined: <HeartOutlined />,
   LogoutOutlined: <LogoutOutlined />,
+  FullscreenOutlined: <FullscreenOutlined />,
 };
 
 const App: React.FC<React.HTMLAttributes<HTMLDivElement>> = () => {
@@ -62,8 +64,15 @@ const App: React.FC<React.HTMLAttributes<HTMLDivElement>> = () => {
         theme="dark"
         items={formatMenuList(menuList) as any}
         onClick={(item) => {
-          console.log(item);
-
+          if (item.key === "/fullscreen") {
+            const isFullScreen = !!document.fullscreenElement;
+            if (!isFullScreen) {
+              document.documentElement.requestFullscreen();
+            } else {
+              document.exitFullscreen();
+            }
+            return;
+          }
           navigate(item.key);
         }}
       ></Menu>

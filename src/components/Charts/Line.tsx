@@ -89,23 +89,27 @@ const Line: FC<LineProps> = ({ unitId }) => {
   useEffect(() => {
     setOption({
       title: {
-        text: "重点人数变化趋势图",
+        text: "问题数量变化趋势图",
         textAlign: "left",
-        x: "center",
-        y: "0",
+        textStyle: {
+          fontSize: 16,
+        },
+        // x: "center",
+        // y: "0",
       },
       tooltip: {
         trigger: "axis",
       },
       legend: {
-        top: "15%",
+        // top: "15%",
+        bottom: 0,
         data: ["急迫", "重要", "一般"],
       },
       grid: {
-        top: "30%",
-        left: "3%",
+        top: "12%",
+        left: "4%",
         right: "4%",
-        bottom: "1%",
+        bottom: "12%",
         containLabel: true,
       },
       xAxis: {
@@ -152,7 +156,7 @@ const Line: FC<LineProps> = ({ unitId }) => {
 
   return (
     <>
-      <ReactECharts option={option}></ReactECharts>
+      <ReactECharts option={option} style={{ height: "100%" }}></ReactECharts>
     </>
   );
 };

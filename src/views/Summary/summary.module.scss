@@ -3,8 +3,9 @@
   max-width: 50vw;
   max-height: 60vh;
   border-radius: 2vh;
-  border: 1px solid rgb(186, 185, 185, 0.5);
+  // border: 1px solid rgb(186, 185, 185, 0.5);
   padding: 1vh;
+  background-color: #fff;
 }
 
 .title {
@@ -34,6 +35,7 @@
   text-align: left;
   font-weight: 800;
   line-height: 0.5vw;
+  text-align: center;
 }
 
 .backboneAvatar {

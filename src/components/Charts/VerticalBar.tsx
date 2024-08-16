@@ -95,8 +95,9 @@ const Bar: FC<BarProps> = () => {
     title: {
       text: "各单位问题人员数量图",
       textAlign: "left",
-      x: "center",
-      y: "10",
+      textStyle: {
+        fontSize: 16,
+      },
     },
     tooltip: {
       trigger: "axis",
@@ -104,9 +105,13 @@ const Bar: FC<BarProps> = () => {
         type: "shadow",
       },
     },
+    grid: {
+      top: "6%",
+      bottom: "10%",
+    },
     legend: {
       data: ["绿牌人数", "黄牌人数", "红牌人数"],
-      bottom: "20",
+      bottom: "0",
     },
     yAxis: [
       {
@@ -158,7 +163,7 @@ const Bar: FC<BarProps> = () => {
 
   return (
     <>
-      <p className={style.summayText}>目前大队共有重点人{countTotal()}</p>
+      {/* <p className={style.summayText}>目前大队共有重点人{countTotal()}</p>
       <p className={style.summayText}>
         其中红牌{countCardNumberArray(cardNumber)[2]}、黄牌
         {countCardNumberArray(cardNumber)[1]}
@@ -168,13 +173,14 @@ const Bar: FC<BarProps> = () => {
         干部{countCardNumberArray(catagoryNumber)[0]}、文职
         {countCardNumberArray(catagoryNumber)[1]}、战士
         {countCardNumberArray(catagoryNumber)[2]}
-      </p>
+      </p> */}
       <ReactECharts
         option={bar()}
         style={{
-          marginTop: "2vh",
-          height: "72vh",
-          transform: "translateY(5%)",
+          height: "100%",
+          // marginTop: "2vh",
+          // height: "72vh",
+          // transform: "translateY(5%)",
         }}
       ></ReactECharts>
     </>
