@@ -34,7 +34,7 @@ const App: React.FC = () => {
         `http://localhost:3000/api/people/${unit_id}`
       );
       console.log(res.data.data);
-      setPersonRecords(res.data.data);
+      setPersonRecords(res.data.data.peopleWithUnsolvedRecords);
     } catch (err) {
       message.error("获取数据失败");
     }

@@ -8,7 +8,7 @@ interface RadarProps {
 
 interface indicatorInter {
   name: string;
-  max: number;
+  // max: number;
 }
 
 const Radar: FC<RadarProps> = ({ unitId }) => {
@@ -37,7 +37,7 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
     thisMonthProblemList.forEach((problem) => {
       const ind: indicatorInter = {
         name: problem.name as string,
-        max: 5,
+        // max: 20,
       };
       indicator.push(ind);
       thisMonthValue.push(problem.record?.length || 0);
@@ -106,7 +106,7 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
         data: [
           {
             value: thisMonthValue,
-            // value: [4, 3, 2, 3, 3, 5, 4, 3, 2, 3, 2, 1, 2],
+            // value: [400, 3, 2, 3, 3, 5, 4, 3, 2, 3, 2, 5, 2],
             name: "本月人数",
             areaStyle: { color: "rgba(247, 14, 6, 0.6)" },
             lineStyle: {

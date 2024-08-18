@@ -30,13 +30,24 @@ const App: React.FC<CardProps> = (props: CardProps) => {
   const [responsibleList, setResponsibleList] = useState<ResponsibleInter[]>(
     []
   );
+  const [avatarURL, setAvatarURL] = useState<string>("");
 
   useEffect(() => {
-    const responsibleData = toJS(store.responsible);
-    responsibleData && setResponsibleList(responsibleData);
-  }, []);
+    fetchResponsibleByUnitId(unit_id);
+    // const responsibleData = toJS(store.responsible);
+    // responsibleData && setResponsibleList(responsibleData);
+  }, [unit_id]);
 
-  const [avatarURL, setAvatarURL] = useState<string>("");
+  const fetchResponsibleByUnitId = async (unit_id: number) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/api/responsible/unit/${unit_id}`
+      );
+      setResponsibleList(res.data.data);
+    } catch (err) {
+      message.error("获取数据失败");
+    }
+  };
 
   const formRef = useRef(null);
 
@@ -47,6 +58,7 @@ const App: React.FC<CardProps> = (props: CardProps) => {
     values.avatar = avatarURL;
     values.unit_id = props.unit_id; // specify division
     const res = await axios.post("people/add", values);
+    console.log("-----------------", res);
     if (res.data.errno) {
       message.error(res.data.message);
       return;
@@ -55,6 +67,9 @@ const App: React.FC<CardProps> = (props: CardProps) => {
     (formRef as any).current.resetFields();
     setStatus("+");
     message.success("添加成功");
+    if (res.data.data.id) {
+      navigate(`/record-detail/${res.data.data.id}`);
+    }
   };
 
   const closeAdding = (): void => {
@@ -193,7 +208,7 @@ const App: React.FC<CardProps> = (props: CardProps) => {
             <Form.Item
               label="负责人"
               name="responsible_id"
-              rules={[{ required: true, message: "请选择负责任" }]}
+              rules={[{ required: true, message: "请选择负责人" }]}
               className={style["form-item"]}
             >
               <Select>

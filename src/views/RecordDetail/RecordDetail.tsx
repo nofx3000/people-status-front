@@ -142,6 +142,25 @@ export default function RecordDetail() {
     </>
   );
 
+  const RecordList = () => {
+    if (!personInfo) return <p>加载中...</p>;
+    if (!personInfo.records)
+      return <p>尚未添加问题，请点击上方按钮尽快添加！</p>;
+    if (personInfo.records.length === 0)
+      return <p>尚未添加问题，请点击上方按钮尽快添加！</p>;
+    return (
+      <div>
+        {personInfo.records.map((record, index) => (
+          <RecordDevelopment
+            fetchPersonInfo={fetchPersonInfo}
+            record={record}
+            key={index}
+          ></RecordDevelopment>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <>
       <Flex vertical>
@@ -154,14 +173,7 @@ export default function RecordDetail() {
         </Flex>
         <AddRecord />
         <div>
-          {personInfo &&
-            personInfo.records?.map((record, index) => (
-              <RecordDevelopment
-                fetchPersonInfo={fetchPersonInfo}
-                record={record}
-                key={index}
-              ></RecordDevelopment>
-            ))}
+          <RecordList />
         </div>
       </Flex>
     </>

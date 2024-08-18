@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { Card, message, Form, Input, Popconfirm } from "antd";
 import dateFormat from "dateformat";
-import { Timeline, Button, Select, Space, Radio } from "@arco-design/web-react";
+import {
+  Timeline,
+  Button,
+  Watermark,
+  Select,
+  Space,
+  Radio,
+} from "@arco-design/web-react";
 import "@arco-design/web-react/dist/css/arco.css";
 import axios from "axios";
 
@@ -175,46 +182,53 @@ const RecordDevelopment: React.FC<RecordDevelopmentProps> = ({
   );
 
   return (
-    <Card style={{ marginTop: "2vh" }}>
-      <div>
-        <span style={{ marginRight: "2vw" }}>
-          问题类型：{record.problem?.name}
-        </span>
+    <Watermark content={record.is_closed ? "已完结" : undefined}>
+      <Card
+        style={{
+          marginTop: "2vh",
+          // backgroundColor: record.is_closed ? "darkgray" : "",
+        }}
+      >
+        <div>
+          <span style={{ marginRight: "2vw" }}>
+            问题类型：{record.problem?.name}
+          </span>
 
-        {record.is_closed ? (
-          <span>已于{dateFormat(record.updatedAt, "yyyy-mm-dd")}完结</span>
+          {record.is_closed ? (
+            <span>已于{dateFormat(record.updatedAt, "yyyy-mm-dd")}完结</span>
+          ) : (
+            <>
+              <span style={{ marginRight: "2vw" }}>
+                记录时间:{dateFormat(record.updatedAt, "yyyy-mm-dd")}
+              </span>
+              <Button
+                type="primary"
+                onClick={() => {
+                  setIsAdding(true);
+                }}
+              >
+                添加问题详情记录
+              </Button>
+              <Popconfirm
+                title="确认"
+                description="是否确认完结?"
+                onConfirm={() => {
+                  onProblemClose();
+                }}
+              >
+                <Button style={{ marginLeft: "2vw" }}>完结</Button>
+              </Popconfirm>
+            </>
+          )}
+        </div>
+        {isAdding && <DevelopmentForm />}
+        {record.record_Developments?.length === 0 ? (
+          <p>目前尚没有问题详情记录，请点击“添加问题详情记录”按钮添加！</p>
         ) : (
-          <>
-            <span style={{ marginRight: "2vw" }}>
-              记录时间:{dateFormat(record.updatedAt, "yyyy-mm-dd")}
-            </span>
-            <Button
-              type="primary"
-              onClick={() => {
-                setIsAdding(true);
-              }}
-            >
-              添加问题详情记录
-            </Button>
-            <Popconfirm
-              title="确认"
-              description="是否确认完结?"
-              onConfirm={() => {
-                onProblemClose();
-              }}
-            >
-              <Button style={{ marginLeft: "2vw" }}>完结</Button>
-            </Popconfirm>
-          </>
+          <TimeLineComponent />
         )}
-      </div>
-      {isAdding && <DevelopmentForm />}
-      {record.record_Developments?.length === 0 ? (
-        <p>目前尚没有问题详情记录，请点击“添加问题详情记录”按钮添加！</p>
-      ) : (
-        <TimeLineComponent />
-      )}
-    </Card>
+      </Card>
+    </Watermark>
   );
 };
 

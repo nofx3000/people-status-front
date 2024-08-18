@@ -31,9 +31,14 @@ const Summary: React.FC = () => {
   );
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isResponsibleModalOpen, setIsResponsibleModalOpen] = useState(false);
-  const [peopleRecords, setPersonRecords] = useState<PersonInfoInter[]>([]);
+  const [peopleWtihUnsolvedRecords, setPeopleWtihUnsolvedRecords] = useState<
+    PersonInfoInter[]
+  >([]);
+  const [peopleSolved, setPeopleSolved] = useState<PersonInfoInter[]>([]);
   const [numberInCard, setNumberInCard] = useState<any[]>([0, 0, 0]);
   const [catagoryInCard, setCatagoryInCard] = useState<any[]>([0, 0, 0]);
+  const [unsolvedRecords, setUnsolvedRecords] = useState<RecordInter[]>([]);
+  const [solvedRecords, setSolvedRecords] = useState<RecordInter[]>([]);
 
   useEffect(() => {
     fetchUserJWT();
@@ -43,12 +48,31 @@ const Summary: React.FC = () => {
   useEffect(() => {
     fetchPeopleByUnitId(currentUnitId);
     fetchResponsibleByUnitId(currentUnitId);
+    fetchUnsolvedRecords(currentUnitId);
+    fetchSolvedRecords(currentUnitId);
   }, [currentUnitId]);
 
   useEffect(() => {
-    countNumberInCard(peopleRecords);
-    countCatagoryInCard(peopleRecords);
-  }, [peopleRecords]);
+    countNumberInCard(peopleWtihUnsolvedRecords);
+    countCatagoryInCard(peopleWtihUnsolvedRecords);
+  }, [peopleWtihUnsolvedRecords]);
+
+  const fetchUnsolvedRecords = async (currentUnitId: number) => {
+    const res = await axios.get(`/record/unit/${currentUnitId}`);
+    if (res.status == 200) {
+      setUnsolvedRecords(res.data.data);
+    } else {
+      message.error("获取留存问题数失败");
+    }
+  };
+  const fetchSolvedRecords = async (currentUnitId: number) => {
+    const res = await axios.get(`/record/unit/${currentUnitId}/solved`);
+    if (res.status == 200) {
+      setSolvedRecords(res.data.data);
+    } else {
+      message.error("获取解决问题数失败");
+    }
+  };
 
   const fetchUserJWT = async (): Promise<any> => {
     await store.getUserJWT();
@@ -69,7 +93,9 @@ const Summary: React.FC = () => {
       const res = await axios.get(
         `http://localhost:3000/api/people/${unit_id}`
       );
-      setPersonRecords(res.data.data);
+      setPeopleWtihUnsolvedRecords(res.data.data.peopleWithUnsolvedRecords);
+      setPeopleSolved(res.data.data.peopleSolved);
+      console.log(res.data.data);
     } catch (err) {
       message.error("获取数据失败");
     }
@@ -117,14 +143,14 @@ const Summary: React.FC = () => {
     return person;
   };
 
-  const countNumberInCard = (peopleRecords: PersonInfoInter[]) => {
+  const countNumberInCard = (peopleWtihUnsolvedRecords: PersonInfoInter[]) => {
     const data: any[] = [
       { name: "急迫", value: 0 },
       { name: "重要", value: 0 },
       { name: "一般", value: 0 },
     ];
-    peopleRecords &&
-      peopleRecords.forEach((person) => {
+    peopleWtihUnsolvedRecords &&
+      peopleWtihUnsolvedRecords.forEach((person) => {
         const level = getPersonLevel(person.records ? person.records : []);
         if (level === 2) {
           data[0].value++;
@@ -137,14 +163,16 @@ const Summary: React.FC = () => {
     setNumberInCard(data);
   };
 
-  const countCatagoryInCard = (peopleRecords: PersonInfoInter[]) => {
+  const countCatagoryInCard = (
+    peopleWtihUnsolvedRecords: PersonInfoInter[]
+  ) => {
     const data: any[] = [
       { name: "干部", value: 0 },
       { name: "文职", value: 0 },
       { name: "战士", value: 0 },
     ];
-    peopleRecords &&
-      peopleRecords.forEach((person) => {
+    peopleWtihUnsolvedRecords &&
+      peopleWtihUnsolvedRecords.forEach((person) => {
         if (person.catagory === 2) {
           data[2].value++;
         } else if (person.catagory === 1) {
@@ -308,8 +336,10 @@ const Summary: React.FC = () => {
         <Flex vertical={false} justify="space-around">
           <Flex vertical flex={1} align="center">
             <Statistic
-              title="重点人总数"
-              value={9}
+              title="现有重点人数"
+              value={
+                peopleWtihUnsolvedRecords ? peopleWtihUnsolvedRecords.length : 0
+              }
               valueStyle={{
                 color: "#007DFA",
                 fontSize: "2.5vw",
@@ -319,8 +349,8 @@ const Summary: React.FC = () => {
               }}
             />
             <Statistic
-              title="问题总数"
-              value={17}
+              title="摘牌人数"
+              value={peopleSolved ? peopleSolved.length : 0}
               valueStyle={{
                 color: "#007DFA",
                 fontSize: "2.5vw",
@@ -333,8 +363,8 @@ const Summary: React.FC = () => {
           <div style={{ borderRight: "2px solid #f0f0f0" }}></div>
           <Flex vertical flex={1} align="center">
             <Statistic
-              title="挂牌人数"
-              value={9}
+              title="留存问题数"
+              value={unsolvedRecords.length}
               valueStyle={{
                 color: "#007DFA",
                 fontSize: "2.5vw",
@@ -344,8 +374,8 @@ const Summary: React.FC = () => {
               }}
             />
             <Statistic
-              title="摘牌人数"
-              value={0}
+              title="解决问题数"
+              value={solvedRecords.length}
               valueStyle={{
                 color: "#007DFA",
                 fontSize: "2.5vw",
@@ -383,8 +413,10 @@ const Summary: React.FC = () => {
         <Flex vertical={false} justify="space-around">
           <Flex vertical flex={1} align="center">
             <Statistic
-              title="重点人总数"
-              value={9}
+              title="现有重点人数"
+              value={
+                peopleWtihUnsolvedRecords ? peopleWtihUnsolvedRecords.length : 0
+              }
               valueStyle={{
                 color: "#007DFA",
                 fontSize: "2.5vw",
@@ -395,7 +427,7 @@ const Summary: React.FC = () => {
             />
             <Statistic
               title="摘牌人数"
-              value={2}
+              value={peopleSolved ? peopleSolved.length : 0}
               valueStyle={{
                 color: "#007DFA",
                 fontSize: "2.5vw",
@@ -409,7 +441,7 @@ const Summary: React.FC = () => {
           <Flex vertical flex={1} align="center">
             <Statistic
               title="留存问题数"
-              value={17}
+              value={unsolvedRecords.length}
               valueStyle={{
                 color: "#007DFA",
                 fontSize: "2.5vw",
@@ -420,7 +452,7 @@ const Summary: React.FC = () => {
             />
             <Statistic
               title="解决问题数"
-              value={0}
+              value={solvedRecords.length}
               valueStyle={{
                 color: "#007DFA",
                 fontSize: "2.5vw",
@@ -637,7 +669,7 @@ const Summary: React.FC = () => {
           >
             <Table
               columns={columns}
-              dataSource={peopleRecords}
+              dataSource={peopleWtihUnsolvedRecords}
               className={style.table}
             />
           </div>
