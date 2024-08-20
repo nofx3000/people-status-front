@@ -9,8 +9,7 @@ import Login from "../views/Login/Login";
 import Index from "../views/Index/Index";
 import List from "../views/List/List";
 import BasicInfo from "../views/BasicInfo/BasicInfo";
-import PeopleStatus from "../views/PeopleStatus/PeopleStatus";
-import Summary from "../views/Summary/Summary";
+import Summary from "../views/Summary/Index";
 import Responsible from "../views/Responsible/Responsible";
 import RecordDetail from "../views/RecordDetail/RecordDetail";
 
@@ -34,10 +33,6 @@ const router = createHashRouter([
       {
         path: "list",
         element: <List />,
-      },
-      {
-        path: "status",
-        element: <PeopleStatus />,
       },
       {
         path: "basicinfo",

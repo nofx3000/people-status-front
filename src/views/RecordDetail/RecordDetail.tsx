@@ -1,18 +1,19 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, Button, Flex } from "antd";
 import RecordForm from "../../components/RecordForm/RecordForm";
 import RecordDevelopment from "../../components/RecordDevelopment/RecordDevelopment";
 import { useParams } from "react-router-dom";
 import getLevel from "../../utils/GetPersonRiskLevel";
+import formatCatagory from "../../utils/FormatCatagory";
 import { useNavigate } from "react-router-dom";
 
 export default function RecordDetail() {
   const { person_id: string_person_id } = useParams();
   const navigate = useNavigate();
-  const person_id = string_person_id ? Number(string_person_id) : 0;
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [personInfo, setPersonInfo] = useState<PersonInfoInter | null>(null);
+  const person_id = string_person_id ? Number(string_person_id) : 0;
 
   useEffect(() => {
     person_id && fetchPersonInfo(person_id);
@@ -33,37 +34,6 @@ export default function RecordDetail() {
   const onAddButtonClick = () => {
     setIsAdding(true);
   };
-
-  const formatCatagory = (catagory: number) => {
-    switch (catagory) {
-      case 0:
-        return "干部";
-      case 1:
-        return "军士";
-      case 2:
-        return "文职";
-      default:
-        break;
-    }
-  };
-
-  // const getLevel = (records: RecordInter[]) => {
-  //   let max = 0;
-  //   for (const record of records) {
-  //     if (
-  //       !record.record_Developments ||
-  //       record.record_Developments.length === 0
-  //     ) {
-  //       continue;
-  //     }
-  //     const development =
-  //       record.record_Developments as RecordDevelopmentInter[];
-  //     if ((development[0].risk_level as number) > max) {
-  //       max = development[0].risk_level as number;
-  //     }
-  //   }
-  //   return max;
-  // };
 
   const BasicInfo = () => {
     if (!personInfo) return <p>loading...</p>;

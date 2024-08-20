@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { setToken } from "../../store/slices/userinfoSlice";
 import { useDispatch } from "react-redux";
 import { App as globalAntd } from "antd";
+import store from "../../mobx_store/store";
 import axios from "axios";
 
 const App: React.FC = () => {
@@ -21,6 +22,7 @@ const App: React.FC = () => {
       token = `Bearer ${token}`;
       window.localStorage.setItem("token", token);
       dispatch(setToken(token));
+      await store.getUserJWT();
       message.success("登陆成功!");
       navigate("/");
     } catch (error) {

@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-
-import { observer } from "mobx-react-lite";
 import { toJS } from "mobx";
 import store from "../../mobx_store/store";
 import style from "./responsible.module.scss";
@@ -13,7 +11,6 @@ const App: React.FC = () => {
     []
   );
   const [userJWT, setUserJWT] = useState<any>([]);
-  const [currentResponsibleId, setCurrentResponsibleId] = useState<number>(0);
   // store异步获取responsibleData
   const fetchResponsibleData = async (unitId: number) => {
     await store.getResponsibleByUnit(unitId);

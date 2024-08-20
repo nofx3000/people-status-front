@@ -1,27 +1,22 @@
 import React, { useState } from "react";
-
-import { observer } from "mobx-react-lite";
 import { toJS } from "mobx";
 import store from "../../mobx_store/store";
 import style from "./basicinfo.module.scss";
-import { Collapse, message, Divider, Card, CollapseProps } from "antd";
+import { Collapse, message, CollapseProps } from "antd";
 import { useEffect } from "react";
 import BasicInfoCard from "../../components/BasicInfoCard/BasicInfoCard";
 import axios from "axios";
 
 const App: React.FC = () => {
-  const [peopleWtihUnsolvedRecords, setPeopleWtihUnsolvedRecords] = useState<
+  const [peopleWithUnsolvedRecords, setPeopleWtihUnsolvedRecords] = useState<
     PersonInfoInter[]
   >([]);
   const [peopleSolved, setPeopleSolved] = useState<PersonInfoInter[]>([]);
   const [responsibleList, setResponsibleList] = useState<ResponsibleInter[]>(
     []
   );
-  // const [responsibleList, setPResponsibleList] = useState<ResponsibleInter[]>(
-  //   []
-  // );
+
   const [userJWT, setUserJWT] = useState<any>([]);
-  const [currentPersonId, setCurrentPersonId] = useState<number>(0);
   // store异步获取responsibleData
   const fetchResponsibleData = async (unitId: number) => {
     try {
@@ -32,22 +27,13 @@ const App: React.FC = () => {
     } catch (err) {
       message.error("获取数据失败");
     }
-    // await store.getResponsibleByUnit(unitId);
-    // const responsibleData = toJS(store.responsible);
-    // setPResponsibleList(responsibleData);
-    // console.log("----responsibleData", responsibleData);
   };
   // store异步获取peopleData
   const fetchPeopleData = async (unitId: number) => {
-    // await store.getPeopleByUnit(unitId);
-    // const peopleData = toJS(store.people);
-    // setPeopleList(peopleData);
-    // console.log("----peopleData", peopleData);
     try {
       const res = await axios.get(`http://localhost:3000/api/people/${unitId}`);
       setPeopleWtihUnsolvedRecords(res.data.data.peopleWithUnsolvedRecords);
       setPeopleSolved(res.data.data.peopleSolved);
-      console.log(res.data.data);
     } catch (err) {
       message.error("获取数据失败");
     }
@@ -76,12 +62,12 @@ const App: React.FC = () => {
     {
       key: "1",
       label: `现有重点人:${
-        peopleWtihUnsolvedRecords && peopleWtihUnsolvedRecords.length
+        peopleWithUnsolvedRecords && peopleWithUnsolvedRecords.length
       }`,
       children: (
         <div className={style["card-container"]}>
-          {peopleWtihUnsolvedRecords
-            ? peopleWtihUnsolvedRecords.map((person: PersonInfoInter) => (
+          {peopleWithUnsolvedRecords
+            ? peopleWithUnsolvedRecords.map((person: PersonInfoInter) => (
                 <BasicInfoCard
                   personinfo={person}
                   key={person.id}

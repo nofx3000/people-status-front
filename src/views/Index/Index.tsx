@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Layout, Button, Flex } from "antd";
 import style from "./Index.module.scss";
 import { Outlet } from "react-router-dom";
 import Menu from "../../components/Menu/Menu";
-import store from "../../mobx_store/store";
-import { toJS } from "mobx";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 
 const { Header, Sider, Content } = Layout;

@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Card, Col, Table, Row, Modal, Button, FormInstance } from "antd";
+import React, { useEffect, useState } from "react";
+import { Table, Button } from "antd";
 import { App as globalAntd } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import store from "../../mobx_store/store";
@@ -8,8 +8,7 @@ import style from "./list.module.scss";
 import dateformat from "dateformat";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { CaretRightOutlined, XFilled } from "@ant-design/icons";
-import RecordForm from "../../components/RecordForm/RecordForm";
+import { CaretRightOutlined } from "@ant-design/icons";
 import getPersonLevel from "../../utils/GetPersonRiskLevel";
 import getRecordLevel from "../../utils/GetRecordLevel";
 
@@ -20,9 +19,19 @@ const App: React.FC = () => {
   const staticFunction = globalAntd.useApp();
   const message = staticFunction.message;
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const userJWTData = await fetchUserJWT();
+      if (userJWTData !== null) {
+        fetchPeopleByUnitId(userJWTData["unit_id"]);
+      }
+    };
+    fetchData();
+  }, []);
+
   // store异步获取userJWT
   const fetchUserJWT = async (): Promise<any> => {
-    await store.getUserJWT();
+    // await store.getUserJWT();
     const userJWT = toJS(store.userInfo);
     setUserJWT(userJWT);
     return userJWT;
@@ -226,16 +235,6 @@ const App: React.FC = () => {
       ),
     },
   ];
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const userJWTData = await fetchUserJWT();
-      if (userJWTData !== null) {
-        fetchPeopleByUnitId(userJWTData["unit_id"]);
-      }
-    };
-    fetchData();
-  }, []);
 
   return (
     <>
