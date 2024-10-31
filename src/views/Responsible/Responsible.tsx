@@ -16,7 +16,6 @@ const App: React.FC = () => {
     await store.getResponsibleByUnit(unitId);
     const responsibleData = toJS(store.responsible);
     setResponsibleList(responsibleData);
-    console.log("----responsibleData", responsibleData);
   };
   // store异步获取userJWT
   const fetchUserJWT = async (): Promise<any> => {

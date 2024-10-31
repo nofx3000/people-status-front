@@ -31,7 +31,7 @@ const App: React.FC = () => {
 
   // store异步获取userJWT
   const fetchUserJWT = async (): Promise<any> => {
-    // await store.getUserJWT();
+    await store.getUserJWT();
     const userJWT = toJS(store.userInfo);
     setUserJWT(userJWT);
     return userJWT;

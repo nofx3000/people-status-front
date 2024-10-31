@@ -30,12 +30,16 @@ const Summary: React.FC = () => {
   >([]);
 
   useEffect(() => {
-    fetchUserJWT();
+    const fetchData = async () => {
+      const userJWT = await fetchUserJWT();
+      fetchPeopleByUnitId(userJWT.unit_id);
+    };
+    fetchData();
   }, []);
 
-  useEffect(() => {
-    fetchPeopleByUnitId(currentUnitId);
-  }, [currentUnitId]);
+  // useEffect(() => {
+  //   fetchPeopleByUnitId(currentUnitId);
+  // }, [currentUnitId]);
 
   const fetchUserJWT = async (): Promise<any> => {
     await store.getUserJWT();
@@ -126,7 +130,10 @@ const Summary: React.FC = () => {
         return (
           <div>
             {person.records.map((record, index) => (
-              <p style={{ lineHeight: "2vh", marginBottom: 1, marginTop: 1 }}>
+              <p
+                style={{ lineHeight: "2vh", marginBottom: 1, marginTop: 1 }}
+                key={index}
+              >
                 •{record.problem?.name}
               </p>
             ))}
@@ -195,6 +202,7 @@ const Summary: React.FC = () => {
               columns={columns}
               dataSource={peopleWtihUnsolvedRecords}
               className={style.table}
+              rowKey={(row) => row.id as any}
             />
           </div>
         </Flex>

@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { setToken } from "../../store/slices/userinfoSlice";
 import { useDispatch } from "react-redux";
 import { App as globalAntd } from "antd";
-import store from "../../mobx_store/store";
 import axios from "axios";
 
 const App: React.FC = () => {
@@ -18,13 +17,16 @@ const App: React.FC = () => {
   const onFinish = async (values: any) => {
     try {
       const res = await axios.post("/users/login", values);
-      let token: string = res.data.data;
-      token = `Bearer ${token}`;
-      window.localStorage.setItem("token", token);
-      dispatch(setToken(token));
-      await store.getUserJWT();
-      message.success("登陆成功!");
-      navigate("/");
+      if (res.status == 200) {
+        let token: string = res.data.data;
+        token = `Bearer ${token}`;
+        window.localStorage.setItem("token", token);
+        dispatch(setToken(token));
+        message.success("登陆成功!");
+        navigate("/");
+      } else {
+        message.error("登录失败!");
+      }
     } catch (error) {
       message.error("用户名或密码错误!");
     }
