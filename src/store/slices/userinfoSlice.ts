@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState, AppDispatch, AppThunk } from "../store";
-import axios from "axios";
+import { RootState } from "../store";
+import { authApi } from "../../api";
 
 interface UserinfoInter {
   id?: number;
@@ -25,9 +25,8 @@ const initialState: UserinfoState = {
 export const verifyTokenAsync = createAsyncThunk(
   "userinfo/verifyToken",
   async () => {
-    const res = await axios.get("/users/verify1");
-    // The value we return becomes the `fulfilled` action payload
-    return res.data;
+    const res = await authApi.decodeUserJWT();
+    return res.data.data;
   }
 );
 
@@ -54,6 +53,7 @@ export const userinfoSlice = createSlice({
 });
 
 export const { setToken } = userinfoSlice.actions;
+
 // !!!CAUTION!!! select中state后面要接reducer名，而不是slice名
 export const selectUserinfo = (state: RootState) =>
   state.userinfoReducer.userinfo;

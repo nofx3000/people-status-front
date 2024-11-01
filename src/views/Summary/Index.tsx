@@ -4,7 +4,6 @@ import { toJS } from "mobx";
 import store from "../../mobx_store/store";
 import type { ColumnsType } from "antd/es/table";
 import style from "./summary.module.scss";
-import axios from "axios";
 import Radar from "../../components/Charts/Radar";
 import Line from "../../components/Charts/Line";
 import VerticalBar from "../../components/Charts/VerticalBar";
@@ -13,6 +12,7 @@ import TodaySummary from "./TodaySummary";
 import DetailModal from "./DetailModal";
 import ResponsibleList from "./ResponsibleList";
 import NumbersOfCards from "./NumbersOfCards";
+import { personApi, authApi } from "../../api";
 
 interface detailModalRefInteface {
   setPersonId: (personId: number) => void;
@@ -44,17 +44,17 @@ const Summary: React.FC = () => {
   const fetchUserJWT = async (): Promise<any> => {
     await store.getUserJWT();
     const userJWT = toJS(store.userInfo);
-    setUserJWT(userJWT);
+    setUserJWT(userJWT as UserInfoInter);
     setCurrentUnitId((userJWT as UserInfoInter).unit_id as number);
     return userJWT;
   };
 
   const fetchPeopleByUnitId = async (unit_id: number) => {
     try {
-      const res = await axios.get(
-        `http://localhost:3000/api/people/${unit_id}`
-      );
-      setPeopleWtihUnsolvedRecords(res.data.data.peopleWithUnsolvedRecords);
+      const res = await personApi.getPeopleByUnitId(unit_id);
+      if (res.status === 200) {
+        setPeopleWtihUnsolvedRecords(res.data.data.peopleWithUnsolvedRecords);
+      }
     } catch (err) {
       message.error("获取数据失败");
     }

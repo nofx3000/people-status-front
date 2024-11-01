@@ -12,6 +12,7 @@ import BasicInfo from "../views/BasicInfo/BasicInfo";
 import Summary from "../views/Summary/Index";
 import Responsible from "../views/Responsible/Responsible";
 import RecordDetail from "../views/RecordDetail/RecordDetail";
+import Specialist from "../views/Specialist/Specialist";
 
 const router = createHashRouter([
   {
@@ -49,6 +50,10 @@ const router = createHashRouter([
       {
         path: "record-detail/:person_id",
         element: <RecordDetail />,
+      },
+      {
+        path: "specialist",
+        element: <Specialist />,
       },
     ],
   },

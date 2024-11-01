@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import style from "./summary.module.scss";
 import { Button, Flex, message } from "antd";
 import defaultAvatar from "../../images/avatar.jpeg";
-import axios from "axios";
 import ResponsibleModal from "./ResponsibleModal";
+import { responsibleApi } from "../../api";
 
 interface responsibleModalRefInteface {
   setResponsibleDetail: (responsible: ResponsibleInter) => void;
@@ -29,10 +29,10 @@ const ResponsibleList: React.FC<ResposibleListInterface> = ({
 
   const fetchResponsibleByUnitId = async (unit_id: number) => {
     try {
-      const res = await axios.get(
-        `http://localhost:3000/api/responsible/unit/${unit_id}`
-      );
-      setResponsibleList(res.data.data);
+      const res = await responsibleApi.getResponsibleByUnit(unit_id);
+      if (res.status === 200) {
+        setResponsibleList(res.data.data);
+      }
     } catch (err) {
       message.error("获取数据失败");
     }

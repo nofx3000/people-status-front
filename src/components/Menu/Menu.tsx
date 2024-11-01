@@ -10,6 +10,7 @@ import {
   HeartOutlined,
   LogoutOutlined,
   FullscreenOutlined,
+  WarningOutlined,
 } from "@ant-design/icons";
 import { Menu, Button } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +32,7 @@ const stringToIconMap: StringToIconInter = {
   HeartOutlined: <HeartOutlined />,
   LogoutOutlined: <LogoutOutlined />,
   FullscreenOutlined: <FullscreenOutlined />,
+  WarningOutlined: <WarningOutlined />,
 };
 
 const App: React.FC<React.HTMLAttributes<HTMLDivElement>> = () => {

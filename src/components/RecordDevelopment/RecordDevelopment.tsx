@@ -10,7 +10,7 @@ import {
   Radio,
 } from "@arco-design/web-react";
 import "@arco-design/web-react/dist/css/arco.css";
-import axios from "axios";
+import { recordApi } from "../../api";
 
 interface RecordDevelopmentProps {
   record: RecordInter;
@@ -39,7 +39,7 @@ const RecordDevelopment: React.FC<RecordDevelopmentProps> = ({
 
   const onDelete = async (development_id: number) => {
     try {
-      const res = await axios.delete(`/record-development/${development_id}`);
+      const res = await recordApi.deleteRecordDevelopment(development_id);
       if (res.status === 200) {
         message.success("删除成功");
         record.person_id && fetchPersonInfo(record.person_id);
@@ -52,14 +52,13 @@ const RecordDevelopment: React.FC<RecordDevelopmentProps> = ({
     }
   };
 
-  const onFinish = async (values: RecordInter) => {
-    const uploadData: RecordDevelopmentInter = {
+  const onFinish = async (values: RecordDevelopmentInter) => {
+    const uploadData = {
       ...values,
-      // unit_id: (toJS(store.userInfo) as any)["unit_id"],
       record_id: record.id,
     };
     try {
-      const res = await axios.post("/record-development/", uploadData);
+      const res = await recordApi.addRecordDevelopment(uploadData);
       if (res.status === 200) {
         message.success("添加成功!");
         fetchPersonInfo && fetchPersonInfo(record.person_id as number);
@@ -80,9 +79,7 @@ const RecordDevelopment: React.FC<RecordDevelopmentProps> = ({
 
   const onProblemClose = async () => {
     try {
-      const res = await axios.put(`/record/${record.id}`, {
-        is_closed: true,
-      });
+      const res = await recordApi.closeRecord(record.id as number);
       if (res.status === 200) {
         message.success("操作成功");
         fetchPersonInfo && fetchPersonInfo(record.person_id as number);

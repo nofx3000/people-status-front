@@ -3,7 +3,7 @@ import { Modal, Flex } from "antd";
 import dateformat from "dateformat";
 import { CaretRightOutlined } from "@ant-design/icons";
 import getRecordLevel from "../../utils/GetRecordLevel";
-import axios from "axios";
+import { personApi } from "../../api";
 import defaultAvatar from "../../images/avatar.jpeg";
 
 const DetailModal = forwardRef((props, ref) => {
@@ -26,9 +26,14 @@ const DetailModal = forwardRef((props, ref) => {
 
   const fetchPersonDetail = async () => {
     if (personId) {
-      const personRecord = await axios.get("/people/person/" + personId);
-      setPersonDetail(personRecord.data.data);
-      console.log("---", personId);
+      try {
+        const res = await personApi.getPersonInfo(personId);
+        if (res.status === 200) {
+          setPersonDetail(res.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching person detail:", error);
+      }
     }
   };
 

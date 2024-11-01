@@ -5,7 +5,7 @@ import style from "./basicinfo.module.scss";
 import { Collapse, message, CollapseProps } from "antd";
 import { useEffect } from "react";
 import BasicInfoCard from "../../components/BasicInfoCard/BasicInfoCard";
-import axios from "axios";
+import { personApi, responsibleApi } from "../../api";
 
 const App: React.FC = () => {
   const [peopleWithUnsolvedRecords, setPeopleWtihUnsolvedRecords] = useState<
@@ -20,10 +20,10 @@ const App: React.FC = () => {
   // store异步获取responsibleData
   const fetchResponsibleData = async (unitId: number) => {
     try {
-      const res = await axios.get(
-        `http://localhost:3000/api/responsible/unit/${unitId}`
-      );
-      setResponsibleList(res.data.data);
+      const res = await responsibleApi.getResponsibleByUnit(unitId);
+      if (res.status === 200) {
+        setResponsibleList(res.data.data);
+      }
     } catch (err) {
       message.error("获取数据失败");
     }
@@ -31,9 +31,11 @@ const App: React.FC = () => {
   // store异步获取peopleData
   const fetchPeopleData = async (unitId: number) => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/people/${unitId}`);
-      setPeopleWtihUnsolvedRecords(res.data.data.peopleWithUnsolvedRecords);
-      setPeopleSolved(res.data.data.peopleSolved);
+      const res = await personApi.getPeopleByUnitId(unitId);
+      if (res.status === 200) {
+        setPeopleWtihUnsolvedRecords(res.data.data.peopleWithUnsolvedRecords);
+        setPeopleSolved(res.data.data.peopleSolved);
+      }
     } catch (err) {
       message.error("获取数据失败");
     }

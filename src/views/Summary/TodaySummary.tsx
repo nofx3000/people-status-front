@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import dateFormat from "dateformat";
 import style from "./summary.module.scss";
-import axios from "axios";
 import { message, Flex, Statistic } from "antd";
+import { personApi, recordApi } from "../../api";
 
 interface TodaySummaryInterface {
   currentUnitId: number;
@@ -23,30 +23,38 @@ const TodaySummary: React.FC<TodaySummaryInterface> = ({ currentUnitId }) => {
   }, [currentUnitId]);
 
   const fetchUnsolvedRecordsByUnitId = async (currentUnitId: number) => {
-    const res = await axios.get(`/record/unit/${currentUnitId}`);
-    if (res.status == 200) {
-      setUnsolvedRecords(res.data.data);
-    } else {
+    try {
+      const res = await recordApi.getUnsolvedRecords(currentUnitId);
+      if (res.status === 200) {
+        setUnsolvedRecords(res.data.data);
+      } else {
+        message.error("获取留存问题数失败");
+      }
+    } catch (error) {
       message.error("获取留存问题数失败");
     }
   };
+
   const fetchSolvedRecords = async (currentUnitId: number) => {
-    const res = await axios.get(`/record/unit/${currentUnitId}/solved`);
-    if (res.status == 200) {
-      setSolvedRecords(res.data.data);
-    } else {
+    try {
+      const res = await recordApi.getSolvedRecords(currentUnitId);
+      if (res.status === 200) {
+        setSolvedRecords(res.data.data);
+      } else {
+        message.error("获取解决问题数失败");
+      }
+    } catch (error) {
       message.error("获取解决问题数失败");
     }
   };
 
   const fetchPeopleByUnitId = async (unit_id: number) => {
     try {
-      const res = await axios.get(
-        `http://localhost:3000/api/people/${unit_id}`
-      );
-      setPeopleWtihUnsolvedRecords(res.data.data.peopleWithUnsolvedRecords);
-      setPeopleSolved(res.data.data.peopleSolved);
-      console.log(res.data.data);
+      const res = await personApi.getPeopleByUnitId(unit_id);
+      if (res.status === 200) {
+        setPeopleWtihUnsolvedRecords(res.data.data.peopleWithUnsolvedRecords);
+        setPeopleSolved(res.data.data.peopleSolved);
+      }
     } catch (err) {
       message.error("获取数据失败");
     }

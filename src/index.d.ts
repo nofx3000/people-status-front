@@ -1,3 +1,10 @@
+// axios基础响应类型
+interface ApiResponse<T = any> {
+  status: number;
+  data: T;
+  message?: string;
+}
+
 interface RecordInter {
   id?: number;
   person_id?: number;
@@ -72,7 +79,6 @@ interface UnitInter {
   name: string;
   people?: PersonInfoInter[];
 }
-
 interface MenuItemInter {
   id?: number;
   label?: string;

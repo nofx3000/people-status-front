@@ -1,10 +1,10 @@
 import React, { FC, useEffect, useState, forwardRef, LegacyRef } from "react";
 import { toJS } from "mobx";
-import axios from "axios";
 import store from "../../mobx_store/store";
 import { Button, Form, Input, Select, Space, Radio, FormInstance } from "antd";
 import { App as globalAntd } from "antd";
 import { useParams } from "react-router-dom";
+import { recordApi } from "../../api";
 
 interface RecordFormProps {
   fetchPersonInfo?: (personid: number) => void;
@@ -37,8 +37,9 @@ const RecordForm = forwardRef<any, RecordFormProps>(
 
         person_id: person_id ? person_id : 0,
       };
+
       try {
-        const res = await axios.post("/record/add", uploadData);
+        const res = await recordApi.addRecord(uploadData);
         if (res.status === 200) {
           message.success("添加成功!");
           fetchPersonInfo && fetchPersonInfo(person_id);

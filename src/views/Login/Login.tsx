@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { setToken } from "../../store/slices/userinfoSlice";
 import { useDispatch } from "react-redux";
 import { App as globalAntd } from "antd";
-import axios from "axios";
+import { authApi } from "../../api";
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -14,12 +14,11 @@ const App: React.FC = () => {
   const staticFunction = globalAntd.useApp();
   const message = staticFunction.message;
 
-  const onFinish = async (values: any) => {
+  const onFinish = async (values: LoginInter) => {
     try {
-      const res = await axios.post("/users/login", values);
-      if (res.status == 200) {
-        let token: string = res.data.data;
-        token = `Bearer ${token}`;
+      const res = await authApi.login(values);
+      if (res.status === 200) {
+        const token = `Bearer ${res.data.data}`;
         window.localStorage.setItem("token", token);
         dispatch(setToken(token));
         message.success("登陆成功!");

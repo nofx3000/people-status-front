@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState, AppDispatch, AppThunk } from "../store";
-import axios from "axios";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../store";
+import { menuApi } from "../../api";
 
 export interface MenuState {
   menuList: MenuItemInter[];
@@ -13,8 +13,7 @@ const initialState: MenuState = {
 export const getMenuListAsync = createAsyncThunk(
   "menu/getMenuList",
   async () => {
-    const res = await axios.get("/menu/");
-    // The value we return becomes the `fulfilled` action payload
+    const res = await menuApi.getMenuList();
     return res.data.data;
   }
 );

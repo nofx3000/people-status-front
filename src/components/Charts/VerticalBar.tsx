@@ -1,9 +1,9 @@
 import React, { FC, useEffect, useState } from "react";
 import ReactECharts from "echarts-for-react"; // Import ECharts
-import axios from "axios";
 import { message } from "antd";
 import getPersonLevel from "../../utils/GetPersonRiskLevel";
 import style from "./charts.module.scss";
+import { unitApi } from "../../api";
 
 interface BarProps {}
 
@@ -22,8 +22,10 @@ const Bar: FC<BarProps> = () => {
 
   const fetchAllUnit = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/unit`);
-      setUnitInfo(res.data.data);
+      const res = await unitApi.getAllUnits();
+      if (res.status === 200) {
+        setUnitInfo(res.data.data as any);
+      }
     } catch (err) {
       message.error("获取数据失败");
     }

@@ -1,12 +1,12 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { Card, Button, Flex } from "antd";
+import { Card, Button, Flex, message } from "antd";
 import RecordForm from "../../components/RecordForm/RecordForm";
 import RecordDevelopment from "../../components/RecordDevelopment/RecordDevelopment";
 import { useParams } from "react-router-dom";
 import getLevel from "../../utils/GetPersonRiskLevel";
 import formatCatagory from "../../utils/FormatCatagory";
 import { useNavigate } from "react-router-dom";
+import { personApi } from "../../api";
 
 export default function RecordDetail() {
   const { person_id: string_person_id } = useParams();
@@ -17,13 +17,16 @@ export default function RecordDetail() {
 
   useEffect(() => {
     person_id && fetchPersonInfo(person_id);
-  }, []);
+  }, [person_id]);
 
   const fetchPersonInfo = async (id: number) => {
-    const res = await axios.get(`/people/person/${id}`);
-    console.log(res);
-    if (res.status === 200) {
-      setPersonInfo(res.data.data);
+    try {
+      const res = await personApi.getPersonInfo(id);
+      if (res.status === 200) {
+        setPersonInfo(res.data.data);
+      }
+    } catch (error) {
+      message.error("获取人员信息失败");
     }
   };
 

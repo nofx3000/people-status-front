@@ -1,12 +1,7 @@
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch } from "../store/store";
-import {
-  selectToken,
-  selectUserinfo,
-  verifyTokenAsync,
-} from "../store/slices/userinfoSlice";
+import { selectToken, verifyTokenAsync } from "../store/slices/userinfoSlice";
 import { useEffect } from "react";
 
 export default function JwtAuth(props: any) {
@@ -26,7 +21,7 @@ export default function JwtAuth(props: any) {
       navigate("/login");
       // return;
     } else {
-      axios.defaults.headers["authorization"] = token;
+      // axios.defaults.headers["authorization"] = token;
       verify();
     }
   }, [token]);

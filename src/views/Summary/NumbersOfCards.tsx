@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Select } from "antd";
 import style from "./summary.module.scss";
 import getPersonLevel from "../../utils/GetPersonRiskLevel";
-import axios from "axios";
+import { unitApi } from "../../api";
 
 interface NumbersOfCardsInterface {
   peopleWtihUnsolvedRecords: PersonInfoInter[];
@@ -29,9 +29,15 @@ const NumbersOfCards: React.FC<NumbersOfCardsInterface> = ({
   }, [peopleWtihUnsolvedRecords]);
 
   const fetchUnitList = async () => {
-    const unitList = await axios.get("/unit");
-    const _unitList = [{ id: 0, name: "大队总览" }, ...unitList.data.data];
-    setUnitList(_unitList);
+    try {
+      const res = await unitApi.getAllUnits();
+      if (res.status === 200) {
+        const _unitList = [{ id: 0, name: "大队总览" }, ...res.data.data];
+        setUnitList(_unitList as any);
+      }
+    } catch (error) {
+      console.error("Error fetching unit list:", error);
+    }
   };
 
   const countNumberInCard = (peopleWtihUnsolvedRecords: PersonInfoInter[]) => {

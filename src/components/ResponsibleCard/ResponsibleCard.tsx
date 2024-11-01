@@ -1,10 +1,10 @@
 import React, { useRef, useState } from "react";
 import { Card, Button, Input, Form, Select, Radio, Popconfirm } from "antd";
 import style from "./responsible-card.module.scss";
-import axios from "axios";
 import { App as globalAntd } from "antd";
 import AvatarUpload from "../AvatarUpload/AvatarUpload";
 import defaultAvatar from "../../images/avatar.jpeg";
+import { responsibleApi } from "../../api";
 
 interface CardProps {
   unit_id: number;
@@ -31,16 +31,20 @@ const App: React.FC<CardProps> = (props: CardProps) => {
 
   const onAddFinish = async (values: ResponsibleInter) => {
     values.avatar = avatarURL;
-    values.unit_id = props.unit_id; // specify division
-    const res = await axios.post("responsible/add", values);
-    if (res.data.errno) {
-      message.error(res.data.message);
-      return;
+    values.unit_id = props.unit_id;
+    try {
+      const res = await responsibleApi.addResponsible(values);
+      if (res.status === 200) {
+        fetchResponsibleData(unit_id);
+        (formRef as any).current.resetFields();
+        setStatus("+");
+        message.success("添加成功");
+      } else {
+        message.error(res.data.message);
+      }
+    } catch (error) {
+      message.error("添加失败");
     }
-    fetchResponsibleData(unit_id);
-    (formRef as any).current.resetFields();
-    setStatus("+");
-    message.success("添加成功");
   };
 
   const closeAdding = (): void => {
@@ -57,19 +61,23 @@ const App: React.FC<CardProps> = (props: CardProps) => {
   const onEidtFinish = async (values: ResponsibleInter) => {
     values.avatar = avatarURL ? avatarURL : values.avatar;
     values.id = (props.responsibleinfo as ResponsibleInter).id;
-    values.unit_id = props.unit_id; // specify division
-    const res = await axios.put(
-      `responsible/edit/${(props.responsibleinfo as ResponsibleInter).id}`,
-      values
-    );
-    if (res.data.errno) {
-      message.error(res.data.message);
-      return;
+    values.unit_id = props.unit_id;
+    try {
+      const res = await responsibleApi.editResponsible(
+        values.id as number,
+        values
+      );
+      if (res.status === 200) {
+        fetchResponsibleData(unit_id);
+        (formRef as any).current.resetFields();
+        setStatus("data");
+        message.success("修改成功");
+      } else {
+        message.error(res.data.message);
+      }
+    } catch (error) {
+      message.error("修改失败");
     }
-    fetchResponsibleData(unit_id);
-    (formRef as any).current.resetFields();
-    setStatus("data");
-    message.success("修改成功");
   };
 
   const onEditFailed = (errorInfo: any) => {
@@ -77,13 +85,17 @@ const App: React.FC<CardProps> = (props: CardProps) => {
   };
 
   const handleDel = async (id: number) => {
-    const { data } = await axios.delete(`/responsible/del/${id}`);
-    if (data.message) {
-      message.error(data.message);
-      return;
+    try {
+      const res = await responsibleApi.deleteResponsible(id);
+      if (res.status === 200) {
+        message.success("删除成功");
+        fetchResponsibleData(unit_id);
+      } else {
+        message.error(res.data.message);
+      }
+    } catch (error) {
+      message.error("删除失败");
     }
-    message.success("删除成功");
-    fetchResponsibleData(unit_id);
   };
 
   const renderByStatus = (status: CardStatus) => {

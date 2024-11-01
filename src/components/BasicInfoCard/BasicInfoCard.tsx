@@ -3,12 +3,12 @@ import { Card, Button, Input, Form, Select, Radio, Popconfirm } from "antd";
 import style from "./basicinfo-card.module.scss";
 import store from "../../mobx_store/store";
 import { toJS } from "mobx";
-import axios from "axios";
 import { App as globalAntd } from "antd";
 import { useNavigate } from "react-router-dom";
 import AvatarUpload from "../AvatarUpload/AvatarUpload";
 import formatCatagory from "../../utils/FormatCatagory";
 import defaultAvatar from "../../images/avatar.jpeg";
+import { personApi, responsibleApi } from "../../api";
 
 interface CardProps {
   unit_id: number;
@@ -34,16 +34,14 @@ const App: React.FC<CardProps> = (props: CardProps) => {
 
   useEffect(() => {
     fetchResponsibleByUnitId(unit_id);
-    // const responsibleData = toJS(store.responsible);
-    // responsibleData && setResponsibleList(responsibleData);
   }, [unit_id]);
 
   const fetchResponsibleByUnitId = async (unit_id: number) => {
     try {
-      const res = await axios.get(
-        `http://localhost:3000/api/responsible/unit/${unit_id}`
-      );
-      setResponsibleList(res.data.data);
+      const res = await responsibleApi.getResponsibleByUnit(unit_id);
+      if (res.status === 200) {
+        setResponsibleList(res.data.data);
+      }
     } catch (err) {
       message.error("获取数据失败");
     }
@@ -56,19 +54,20 @@ const App: React.FC<CardProps> = (props: CardProps) => {
 
   const onAddFinish = async (values: PersonInfoInter) => {
     values.avatar = avatarURL;
-    values.unit_id = props.unit_id; // specify division
-    const res = await axios.post("people/add", values);
-    console.log("-----------------", res);
-    if (res.data.errno) {
-      message.error(res.data.message);
-      return;
-    }
-    fetchPeopleData(unit_id);
-    (formRef as any).current.resetFields();
-    setStatus("+");
-    message.success("添加成功");
-    if (res.data.data.id) {
-      navigate(`/record-detail/${res.data.data.id}`);
+    values.unit_id = props.unit_id;
+    try {
+      const res = await personApi.addPerson(values);
+      if (res.status === 200) {
+        fetchPeopleData(unit_id);
+        (formRef as any).current.resetFields();
+        setStatus("+");
+        message.success("添加成功");
+        if (res.data.data.id) {
+          navigate(`/record-detail/${res.data.data.id}`);
+        }
+      }
+    } catch (error) {
+      message.error("添加失败");
     }
   };
 
@@ -86,16 +85,18 @@ const App: React.FC<CardProps> = (props: CardProps) => {
   const onEidtFinish = async (values: PersonInfoInter) => {
     values.avatar = avatarURL ? avatarURL : values.avatar;
     values.id = (props.personinfo as PersonInfoInter).id;
-    values.unit_id = props.unit_id; // specify division
-    const res = await axios.put(`people/edit/${values.id}`, values);
-    if (res.data.errno) {
-      message.error(res.data.message);
-      return;
+    values.unit_id = props.unit_id;
+    try {
+      const res = await personApi.editPerson(values.id as number, values);
+      if (res.status === 200) {
+        fetchPeopleData(unit_id);
+        (formRef as any).current.resetFields();
+        setStatus("data");
+        message.success("修改成功");
+      }
+    } catch (error) {
+      message.error("修改失败");
     }
-    fetchPeopleData(unit_id);
-    (formRef as any).current.resetFields();
-    setStatus("data");
-    message.success("修改成功");
   };
 
   const onEditFailed = (errorInfo: any) => {
@@ -103,13 +104,15 @@ const App: React.FC<CardProps> = (props: CardProps) => {
   };
 
   const handleDel = async (id: number) => {
-    const { data } = await axios.delete(`/people/del/${id}`);
-    if (data.message) {
-      message.error(data.message);
-      return;
+    try {
+      const res = await personApi.deletePerson(id);
+      if (res.status === 200) {
+        message.success("删除成功");
+        fetchPeopleData(unit_id);
+      }
+    } catch (error) {
+      message.error("删除失败");
     }
-    message.success("删除成功");
-    fetchPeopleData(unit_id);
   };
 
   const onRecordDetailClicked = () => {

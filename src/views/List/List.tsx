@@ -7,10 +7,10 @@ import { toJS } from "mobx";
 import style from "./list.module.scss";
 import dateformat from "dateformat";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { CaretRightOutlined } from "@ant-design/icons";
 import getPersonLevel from "../../utils/GetPersonRiskLevel";
 import getRecordLevel from "../../utils/GetRecordLevel";
+import { personApi } from "../../api";
 
 const App: React.FC = () => {
   const [userJWT, setUserJWT] = useState<any>([]);
@@ -39,11 +39,10 @@ const App: React.FC = () => {
 
   const fetchPeopleByUnitId = async (unit_id: number) => {
     try {
-      const res = await axios.get(
-        `http://localhost:3000/api/people/${unit_id}`
-      );
-      console.log(res.data.data);
-      setPersonRecords(res.data.data.peopleWithUnsolvedRecords);
+      const res = await personApi.getPeopleByUnitId(unit_id);
+      if (res.status === 200) {
+        setPersonRecords(res.data.data.peopleWithUnsolvedRecords);
+      }
     } catch (err) {
       message.error("获取数据失败");
     }

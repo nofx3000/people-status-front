@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import ReactECharts from "echarts-for-react"; // Import ECharts
-import axios from "axios";
+import { recordApi } from "../../api";
 
 interface RadarProps {
   unitId: number;
@@ -52,9 +52,11 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
 
   const fetchProblemList = async () => {
     try {
-      const res = await axios.get(`/summary/radar/${unitId}`);
-      setThisMonthProblemList(res.data.data.thisMonth);
-      setLastMonthProblemList(res.data.data.lastMonth);
+      const res = await recordApi.getRadarData(unitId);
+      if (res.status === 200) {
+        setThisMonthProblemList(res.data.data.thisMonth);
+        setLastMonthProblemList(res.data.data.lastMonth);
+      }
     } catch (err) {
       console.log(err);
     }

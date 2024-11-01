@@ -1,9 +1,9 @@
 import React, { FC, useEffect, useState } from "react";
 import ReactECharts from "echarts-for-react"; // Import ECharts
-import axios, { AxiosResponse } from "axios";
 import { toJS } from "mobx";
 import store from "../../mobx_store/store";
 import { message } from "antd";
+import { recordApi } from "../../api";
 
 interface LineProps {
   unitId: number;
@@ -56,9 +56,8 @@ const Line: FC<LineProps> = ({ unitId }) => {
   // };
 
   const fetchMonthlyRecords = async (month: number) => {
-    // if (!userJWT.unit_id) return;
-    const res = await axios.get(`/summary/line/${unitId}/${month}`);
-    return res.data.data as RecordInter[];
+    const res = await recordApi.getMonthlyRecords(unitId, month);
+    return res.data.data;
   };
 
   const countMonthlyNumberInCard = (monthlyData: RecordInter[]) => {

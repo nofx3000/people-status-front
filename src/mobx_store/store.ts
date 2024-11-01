@@ -1,13 +1,18 @@
 import { action, makeAutoObservable, observable } from "mobx";
-import axios from "axios";
-// mobx的store初始化代码（ts）
+import {
+  personApi,
+  responsibleApi,
+  authApi,
+  problemApi,
+  ProblemInter,
+} from "../api";
+
 class Store {
   @observable people: PersonInfoInter[] = [];
   @observable problems: ProblemInter[] = [];
   @observable userInfo: {} | UserInfoInter = {};
   @observable responsible: ResponsibleInter[] = [];
 
-  // @observable isAdding = false;
   loading = false;
 
   constructor() {
@@ -18,48 +23,51 @@ class Store {
     this.people = people;
   }
 
-  // setIsAdding(isAdding: boolean) {
-  //   this.isAdding = isAdding;
-  // }
-
-  // 创建mobx异步获取数据方法getProblems，在方法中使用axios从/problem获取数据，并添加到problems
   @action
   async getProblems(): Promise<void> {
     try {
-      const { data } = await axios.get("/problem");
-      this.problems = data.data as ProblemInter[];
+      const res = await problemApi.getProblems();
+      if (res.status === 200) {
+        this.problems = res.data.data;
+      }
     } catch (error) {
       console.error("Error fetching problems:", error);
     }
   }
-  // 根据上面getProblems，写出getPeople的action
+
   @action
   async getPeopleByUnit(unitId: number): Promise<void> {
     try {
-      const { data } = await axios.get(`/people/${unitId}`);
-      this.people = data.data as PersonInfoInter[];
+      const res = await personApi.getPeopleByUnitId(unitId);
+      if (res.status === 200) {
+        this.people = res.data.data.peopleWithUnsolvedRecords;
+      }
     } catch (error) {
       console.error("Error fetching people:", error);
     }
   }
+
   @action
   async getResponsibleByUnit(unitId: number): Promise<void> {
     try {
-      const { data } = await axios.get(`/responsible/unit/${unitId}`);
-      this.responsible = data.data as ResponsibleInter[];
+      const res = await responsibleApi.getResponsibleByUnit(unitId);
+      if (res.status === 200) {
+        this.responsible = res.data.data;
+      }
     } catch (error) {
       console.error("Error fetching responsible:", error);
     }
   }
-  // 获取用户jwt数据
+
   @action
   async getUserJWT(): Promise<void> {
     try {
-      const { data } = await axios.get("/users/verify1");
-      this.userInfo = data.data;
-      console.log("this.userInfo", this.userInfo);
+      const res = await authApi.decodeUserJWT();
+      if (res.status === 200) {
+        this.userInfo = res.data.data;
+      }
     } catch (error) {
-      console.error("Error fetching people:", error);
+      console.error("Error fetching user JWT:", error);
     }
   }
 }
