@@ -22,7 +22,6 @@ import { App } from "antd";
 //     return Promise.reject(error);
 //   }
 // );
-
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );

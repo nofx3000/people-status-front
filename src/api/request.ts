@@ -1,7 +1,8 @@
 import axios from "axios";
+import { BASR_API_URL } from "../constant/index";
 
 const request = axios.create({
-  baseURL: "http://127.0.0.1:3000/api",
+  baseURL: BASR_API_URL,
   timeout: 10000,
 });
 

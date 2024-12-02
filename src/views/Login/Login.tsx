@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { setToken } from "../../store/slices/userinfoSlice";
 import { useDispatch } from "react-redux";
 import { App as globalAntd } from "antd";
+import { toJS } from "mobx";
+import store from "../../mobx_store/store";
 import { authApi } from "../../api";
 
 const App: React.FC = () => {
@@ -22,6 +24,9 @@ const App: React.FC = () => {
         window.localStorage.setItem("token", token);
         dispatch(setToken(token));
         message.success("登陆成功!");
+        await store.getUserJWT();
+        const userJWT = toJS(store.userInfo);
+        await store.checkAdminUpdates(userJWT);
         navigate("/");
       } else {
         message.error("登录失败!");

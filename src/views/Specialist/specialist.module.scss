@@ -1,0 +1,61 @@
+.container {
+  padding: 10px;
+}
+
+.expertList,
+.faqContainer,
+.lawyerContainer {
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.expertAvatar {
+  width: 100px;
+  height: 100px;
+}
+
+.expertCard {
+  margin-top: 6px;
+}
+
+.expertTitle {
+  margin-right: 2vw;
+}
+
+.expertInfo {
+  line-height: 2vh;
+  margin: 1px 0;
+}
+
+.listItem {
+  line-height: 2vh;
+  margin: 1px 0;
+}
+
+.caseTypesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.lawyerCard {
+  display: flex;
+  gap: 20px;
+  @media (max-width: 576px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+.floatingButton {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 48px;
+  height: 48px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

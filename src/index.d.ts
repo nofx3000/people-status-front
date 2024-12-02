@@ -67,6 +67,7 @@ interface UserInfoInter {
   unit_id?: number;
   unit?: UnitInter;
   records?: RecordInter[];
+  last_login?: Date;
 }
 
 interface LoginInter {

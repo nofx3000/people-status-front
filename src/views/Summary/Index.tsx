@@ -1,26 +1,41 @@
 import React, { useState, useEffect, useRef } from "react";
-import { message, Table, Button, Flex } from "antd";
+import { message, notification, Flex } from "antd";
+import { ArrowRightOutlined } from "@ant-design/icons";
 import { toJS } from "mobx";
 import store from "../../mobx_store/store";
-import type { ColumnsType } from "antd/es/table";
 import style from "./summary.module.scss";
 import Radar from "../../components/Charts/Radar";
 import Line from "../../components/Charts/Line";
 import VerticalBar from "../../components/Charts/VerticalBar";
-import getPersonLevel from "../../utils/GetPersonRiskLevel";
 import TodaySummary from "./TodaySummary";
 import DetailModal from "./DetailModal";
 import ResponsibleList from "./ResponsibleList";
 import NumbersOfCards from "./NumbersOfCards";
-import { personApi, authApi } from "../../api";
+import DutyCorner from "./DutyCorner";
+import LawAndRules from "./LawAndRules";
+import { personApi } from "../../api";
+import TableModal from "./TableModal";
 
 interface detailModalRefInteface {
   setPersonId: (personId: number) => void;
   setIsDetailModalOpen: (isDetailModalOpen: boolean) => void;
 }
 
+interface tableModalRefInterface {
+  setIsTableModalOpen: (isOpen: boolean) => void;
+}
+
 const Summary: React.FC = () => {
   const detailModalRef = useRef<detailModalRefInteface>(null);
+  const tableModalRef = useRef<tableModalRefInterface>(null);
+  const [api, contextHolder] = notification.useNotification({
+    stack: true
+      ? {
+          threshold: 3,
+        }
+      : false,
+  });
+
   const [userJWT, setUserJWT] = useState<UserInfoInter>({});
   const [currentUnitId, setCurrentUnitId] = useState<number>(
     userJWT.unit_id as number
@@ -32,14 +47,18 @@ const Summary: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       const userJWT = await fetchUserJWT();
-      fetchPeopleByUnitId(userJWT.unit_id);
+      await fetchPeopleByUnitId(userJWT.unit_id);
     };
     fetchData();
   }, []);
 
-  // useEffect(() => {
-  //   fetchPeopleByUnitId(currentUnitId);
-  // }, [currentUnitId]);
+  useEffect(() => {
+    if (userJWT.role !== "admin") return;
+    const updates = toJS(store.updates);
+    if (updates.length > 0) {
+      updates.forEach(handleOpenNotification);
+    }
+  }, [store.updates, userJWT.role]);
 
   const fetchUserJWT = async (): Promise<any> => {
     await store.getUserJWT();
@@ -60,6 +79,29 @@ const Summary: React.FC = () => {
     }
   };
 
+  const handleOpenNotification = (record: RecordInter) => {
+    if (
+      !record ||
+      !record.record_Developments ||
+      record.record_Developments.length === 0
+    )
+      return;
+    api.open({
+      message: (
+        <p>
+          {record.record_Developments && record.record_Developments?.length > 1
+            ? `变化情况`
+            : `新增情况`}
+        </p>
+      ),
+      description: NotificationDescription(record),
+      duration: null,
+      onClose: () => {
+        store.deleteUpdatedRecord(record.id as number);
+      },
+    });
+  };
+
   const handleChangeCurrentUnitId = (unid_id: number) => {
     setCurrentUnitId(unid_id);
   };
@@ -71,142 +113,175 @@ const Summary: React.FC = () => {
     }
   };
 
-  const columns: ColumnsType<PersonInfoInter> = [
-    {
-      title: "程度",
-      dataIndex: "level",
-      key: "level",
-      // width: 30,
-      defaultSortOrder: "descend",
-      sorter: (a, b) =>
-        getPersonLevel(a.records as RecordInter[]) -
-        getPersonLevel(b.records as RecordInter[]),
-      render: (_, person) => {
-        const level = getPersonLevel(person.records ? person.records : []);
-        return (
-          <div
-            style={{
-              width: "4vw",
-              height: "4vh",
-              borderRadius: "1vh",
-              backgroundColor:
-                level === 0 ? "green" : level === 1 ? "#E0A60F" : "#c23531",
-            }}
-          />
-        );
-      },
-    },
-    {
-      title: "姓名",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "单位",
-      dataIndex: "unit",
-      key: "unit",
-      render: (_, person) => <span>{person.unit?.name}</span>,
-    },
-    {
-      title: "类型",
-      dataIndex: "catagory",
-      key: "catagory",
-      render: (_, person) => (
-        <span>
-          {person.catagory === 0
-            ? "干部"
-            : person.catagory === 1
-            ? "战士"
-            : "文职"}
-        </span>
-      ),
-    },
-    {
-      title: "涉及问题",
-      dataIndex: "problem",
-      key: "problem",
-      render: (_, person) => {
-        if (!person.records) return <p>无</p>;
+  const NotificationDescription = (record: RecordInter) => {
+    const RecordDetail = () => {
+      if (
+        record.record_Developments &&
+        record.record_Developments?.length === 1
+      ) {
+        const cur_level = record.record_Developments[0]?.risk_level;
         return (
           <div>
-            {person.records.map((record, index) => (
-              <p
-                style={{ lineHeight: "2vh", marginBottom: 1, marginTop: 1 }}
-                key={index}
-              >
-                •{record.problem?.name}
-              </p>
-            ))}
+            <div
+              style={{
+                width: "50px",
+                height: "20px",
+                borderRadius: "1vh",
+                backgroundColor:
+                  cur_level === 0
+                    ? "green"
+                    : cur_level === 1
+                    ? "#E0A60F"
+                    : "#c23531",
+              }}
+            />
+            <p>详情: {record.record_Developments[0]?.detail}</p>
+            <p>措施: {record.record_Developments[0]?.measure}</p>
           </div>
         );
-      },
-    },
-    {
-      title: "操作",
-      dataIndex: "option",
-      key: "option",
-      render: (_, person) => (
-        <Button
-          onClick={() => {
-            onDetailClick(person.id as number);
-          }}
-        >
-          详情
-        </Button>
-      ),
-    },
-  ];
+      } else if (
+        record.record_Developments &&
+        record.record_Developments?.length > 1
+      ) {
+        console.log(record.record_Developments);
+        const cur =
+          record.record_Developments[record.record_Developments.length - 1];
+        const pre =
+          record.record_Developments[record.record_Developments.length - 2];
+        return (
+          <Flex vertical={false} justify="space-between">
+            <div style={{ width: "35%" }}>
+              <div
+                style={{
+                  width: "100%",
+                  height: "20px",
+                  borderRadius: "1vh",
+                  backgroundColor:
+                    pre.risk_level === 0
+                      ? "green"
+                      : pre.risk_level === 1
+                      ? "#E0A60F"
+                      : "#c23531",
+                }}
+              />
+              <p>
+                详情:{" "}
+                {pre.detail && pre.detail.length > 30
+                  ? `${pre.detail.slice(0, 30)}...`
+                  : pre.detail}
+              </p>
+              <p>
+                措施:{" "}
+                {pre.measure && pre.measure.length > 30
+                  ? `${pre.measure.slice(0, 30)}...`
+                  : pre.measure}
+              </p>
+            </div>
+            <ArrowRightOutlined style={{ fontSize: "3vh" }} />
+            <div style={{ width: "35%" }}>
+              <div
+                style={{
+                  width: "100%",
+                  height: "20px",
+                  borderRadius: "1vh",
+                  backgroundColor:
+                    cur.risk_level === 0
+                      ? "green"
+                      : cur.risk_level === 1
+                      ? "#E0A60F"
+                      : "#c23531",
+                }}
+              />
+              <p>
+                详情:{" "}
+                {cur.detail && cur.detail.length > 30
+                  ? `${cur.detail.slice(0, 30)}...`
+                  : cur.detail}
+              </p>
+              <p>
+                措施:{" "}
+                {cur.measure && cur.measure.length > 30
+                  ? `${cur.measure.slice(0, 30)}...`
+                  : cur.measure}
+              </p>
+            </div>
+          </Flex>
+        );
+      }
+    };
 
-  const AdminSection = () => (
-    <Flex gap="middle" vertical flex={1} style={{ height: "88vh" }}>
-      <TodaySummary currentUnitId={currentUnitId} />
-      <div
-        className={style.flexcard}
-        style={{ height: "70%", overflow: "auto" }}
-      >
-        <VerticalBar></VerticalBar>
-      </div>
-    </Flex>
-  );
+    return (
+      <>
+        <p>
+          {record.record_Developments && record.record_Developments?.length > 1
+            ? `${record.person?.name} 关于 ${record.problem?.name} 问题的情况变化`
+            : `${record.person?.name} 新增了关于 ${record.problem?.name} 问题的情况`}
+        </p>
+        <p></p>
+        {RecordDetail()}
+      </>
+    );
+  };
 
-  const UserSection = () => (
-    <Flex
-      gap="middle"
-      vertical
-      flex={1}
-      justify="space-between"
-      align="space-between"
-      style={{ height: "88vh" }}
-    >
-      <TodaySummary currentUnitId={currentUnitId} />
-      <ResponsibleList currentUnitId={currentUnitId} />
-    </Flex>
-  );
+  const openTableModal = () => {
+    tableModalRef.current?.setIsTableModalOpen(true);
+  };
 
   return (
     <>
+      {contextHolder}
       <Flex gap="middle" vertical={false}>
-        {userJWT.role === "admin" ? <AdminSection /> : <UserSection />}
-        <Flex gap="middle" vertical flex={2}>
-          <NumbersOfCards
-            peopleWtihUnsolvedRecords={peopleWtihUnsolvedRecords}
-            userJWT={userJWT}
-            currentUnitId={currentUnitId}
-            handleChangeCurrentUnitId={handleChangeCurrentUnitId}
-          />
+        <Flex gap="middle" vertical flex={1} style={{ height: "90vh" }}>
           <div
             className={style.flexcard}
-            style={{ height: "70%", overflow: "auto" }}
+            style={{ height: "30vh", overflow: "auto" }}
           >
-            <Table
-              columns={columns}
-              dataSource={peopleWtihUnsolvedRecords}
-              className={style.table}
-              rowKey={(row) => row.id as any}
-            />
+            <TodaySummary currentUnitId={currentUnitId} />
+          </div>
+          <div
+            className={style.flexcard}
+            style={{ height: "100%", overflow: "auto" }}
+          >
+            {userJWT.role === "admin" ? (
+              <VerticalBar />
+            ) : (
+              <ResponsibleList currentUnitId={currentUnitId} />
+            )}
           </div>
         </Flex>
-        <Flex gap="middle" vertical flex={1}>
+        <Flex gap="middle" vertical flex={2} style={{ height: "90vh" }}>
+          <div
+            className={style.flexcard}
+            style={{ height: "30vh", overflow: "auto" }}
+          >
+            <NumbersOfCards
+              peopleWtihUnsolvedRecords={peopleWtihUnsolvedRecords}
+              userJWT={userJWT}
+              currentUnitId={currentUnitId}
+              handleChangeCurrentUnitId={handleChangeCurrentUnitId}
+              openTableModal={openTableModal}
+            />
+          </div>
+          <div
+            className={style.flexcard}
+            style={{ height: "35%", overflow: "auto" }}
+          >
+            <p style={{ fontSize: "2vh", fontWeight: "500", margin: 0 }}>
+              值班园地
+            </p>
+            <DutyCorner></DutyCorner>
+          </div>
+          <div
+            className={style.flexcard}
+            style={{ height: "35%", overflow: "auto" }}
+          >
+            <p style={{ fontSize: "2vh", fontWeight: "500", margin: 0 }}>
+              法律法规
+            </p>
+            <LawAndRules></LawAndRules>
+          </div>
+        </Flex>
+        <Flex gap="middle" vertical flex={1} style={{ height: "90vh" }}>
           <div className={style.flexcard} style={{ height: "50%" }}>
             <Line unitId={currentUnitId}></Line>
           </div>
@@ -216,6 +291,11 @@ const Summary: React.FC = () => {
         </Flex>
       </Flex>
       <DetailModal ref={detailModalRef} />
+      <TableModal
+        ref={tableModalRef}
+        peopleWtihUnsolvedRecords={peopleWtihUnsolvedRecords}
+        onDetailClick={onDetailClick}
+      />
     </>
   );
 };

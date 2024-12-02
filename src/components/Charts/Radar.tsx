@@ -54,6 +54,8 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
     try {
       const res = await recordApi.getRadarData(unitId);
       if (res.status === 200) {
+        console.log(res.data.data);
+
         setThisMonthProblemList(res.data.data.thisMonth);
         setLastMonthProblemList(res.data.data.lastMonth);
       }

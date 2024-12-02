@@ -39,10 +39,12 @@ const Line: FC<LineProps> = ({ unitId }) => {
     for (const index in _monthData[0]) {
       const i = Number(index);
       const res = await fetchMonthlyRecords(i + 1);
-      if (res.length === 0) continue;
-      _monthData[0][i] = countMonthlyNumberInCard(res)[0];
-      _monthData[1][i] = countMonthlyNumberInCard(res)[1];
-      _monthData[2][i] = countMonthlyNumberInCard(res)[2];
+      if (res && res.length === 0) continue;
+      if (res) {
+        _monthData[0][i] = countMonthlyNumberInCard(res)[0];
+        _monthData[1][i] = countMonthlyNumberInCard(res)[1];
+        _monthData[2][i] = countMonthlyNumberInCard(res)[2];
+      }
     }
 
     return _monthData;
@@ -56,8 +58,12 @@ const Line: FC<LineProps> = ({ unitId }) => {
   // };
 
   const fetchMonthlyRecords = async (month: number) => {
-    const res = await recordApi.getMonthlyRecords(unitId, month);
-    return res.data.data;
+    try {
+      const res = await recordApi.getMonthlyRecords(unitId, month);
+      return res.data.data;
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const countMonthlyNumberInCard = (monthlyData: RecordInter[]) => {

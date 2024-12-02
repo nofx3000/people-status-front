@@ -10,7 +10,7 @@ import {
   Radio,
 } from "@arco-design/web-react";
 import "@arco-design/web-react/dist/css/arco.css";
-import { recordApi } from "../../api";
+import { recordApi, llmApi } from "../../api";
 
 interface RecordDevelopmentProps {
   record: RecordInter;
@@ -22,12 +22,12 @@ const { TextArea } = Input;
 const TimelineItem = Timeline.Item;
 
 const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 16 },
+  labelCol: { span: 6 },
+  wrapperCol: { span: 18 },
 };
 
 const tailLayout = {
-  wrapperCol: { offset: 8, span: 16 },
+  wrapperCol: { offset: 6, span: 18 },
 };
 
 const RecordDevelopment: React.FC<RecordDevelopmentProps> = ({
@@ -57,6 +57,8 @@ const RecordDevelopment: React.FC<RecordDevelopmentProps> = ({
       ...values,
       record_id: record.id,
     };
+    console.log(uploadData);
+
     try {
       const res = await recordApi.addRecordDevelopment(uploadData);
       if (res.status === 200) {
@@ -92,53 +94,115 @@ const RecordDevelopment: React.FC<RecordDevelopmentProps> = ({
     }
   };
 
-  const DevelopmentForm = () => (
-    <Form
-      {...layout}
-      form={form}
-      name="control-hooks"
-      onFinish={onFinish}
-      style={{ maxWidth: 600 }}
-      //   initialValues={editRecord ? editRecord : undefined}
-    >
-      <Form.Item
-        name="risk_level"
-        label="问题程度"
-        rules={[{ required: true }]}
+  const DevelopmentForm = () => {
+    const [detail, setDetail] = useState<string>("");
+    const [measure, setMeasure] = useState<string>("");
+    const [risk_level, setRisk_level] = useState<number | undefined>(undefined);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [form] = Form.useForm();
+
+    const handleGetAiAdivce = async () => {
+      try {
+        setIsLoading(true);
+        setMeasure("");
+        await llmApi.getAIMeasure(detail, (token) => {
+          setMeasure((prev) => {
+            const newMeasure = prev + token;
+            form.setFieldValue("measure", newMeasure);
+            return newMeasure;
+          });
+        });
+        const res = await llmApi.getAIRiskLevel(detail);
+        const ai_risk_level = res.data.kwargs.content;
+        console.log("res:", res, "level:", ai_risk_level);
+        const riskLevelNum =
+          ai_risk_level === "0" ||
+          ai_risk_level === "1" ||
+          ai_risk_level === "2"
+            ? parseInt(ai_risk_level)
+            : undefined;
+
+        setRisk_level(riskLevelNum);
+        form.setFieldValue("risk_level", riskLevelNum);
+      } catch (error) {
+        console.error("Error getting AI advice:", error);
+        message.error("获取AI建议失败");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    return (
+      <Form
+        {...layout}
+        form={form}
+        name="control-hooks"
+        onFinish={onFinish}
+        style={{ maxWidth: "40vw" }}
       >
-        <Radio.Group>
-          <Radio value={0} style={{ color: "green" }}>
-            一般
-          </Radio>
-          <Radio value={1} style={{ color: "#E0A60F" }}>
-            重要
-          </Radio>
-          <Radio value={2} style={{ color: "red" }}>
-            急迫
-          </Radio>
-        </Radio.Group>
-      </Form.Item>
-      <Form.Item name="detail" label="具体描述" rules={[{ required: true }]}>
-        <TextArea />
-      </Form.Item>
-      <Form.Item name="measure" label="应对措施" rules={[{ required: true }]}>
-        <TextArea />
-      </Form.Item>
-      <Form.Item name="comment" label="备注" rules={[{ required: true }]}>
-        <TextArea />
-      </Form.Item>
-      <Form.Item {...tailLayout}>
-        <Space>
-          <Button type="primary" htmlType="submit">
-            提交
+        <Form.Item name="detail" label="具体描述" rules={[{ required: true }]}>
+          <TextArea
+            value={detail}
+            onChange={(e) => {
+              setDetail(e.target.value);
+              form.setFieldValue("detail", e.target.value);
+            }}
+            autoSize={{ minRows: 2, maxRows: 20 }}
+          />
+          <Button
+            onClick={handleGetAiAdivce}
+            loading={isLoading}
+            disabled={!detail || detail.trim() === "" || isLoading}
+          >
+            获取智能建议
           </Button>
-          <Button htmlType="button" onClick={onCancel}>
-            取消
-          </Button>
-        </Space>
-      </Form.Item>
-    </Form>
-  );
+        </Form.Item>
+        <Form.Item name="measure" label="应对措施" rules={[{ required: true }]}>
+          <TextArea
+            value={measure}
+            onChange={(e) => {
+              setMeasure(e.target.value);
+              form.setFieldValue("measure", e.target.value);
+            }}
+            autoSize={{ minRows: 2, maxRows: 20 }}
+          />
+        </Form.Item>
+        <Form.Item name="comment" label="备注" rules={[{ required: false }]}>
+          <TextArea autoSize={{ minRows: 2, maxRows: 20 }} />
+        </Form.Item>
+        <Form.Item
+          name="risk_level"
+          label="问题程度"
+          rules={[{ required: true }]}
+        >
+          <Radio.Group
+            value={risk_level}
+            onChange={(value) => setRisk_level(value)}
+          >
+            <Radio value={0} style={{ color: "green" }}>
+              一般
+            </Radio>
+            <Radio value={1} style={{ color: "#E0A60F" }}>
+              重要
+            </Radio>
+            <Radio value={2} style={{ color: "red" }}>
+              急迫
+            </Radio>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item {...tailLayout}>
+          <Space>
+            <Button type="primary" htmlType="submit">
+              提交
+            </Button>
+            <Button htmlType="button" onClick={onCancel}>
+              取消
+            </Button>
+          </Space>
+        </Form.Item>
+      </Form>
+    );
+  };
 
   const TimeLineComponent = () => (
     <Timeline direction="horizontal" mode="top" labelPosition="relative">
@@ -186,7 +250,11 @@ const RecordDevelopment: React.FC<RecordDevelopmentProps> = ({
           // backgroundColor: record.is_closed ? "darkgray" : "",
         }}
       >
-        <div>
+        <div
+          style={{
+            marginBottom: "2vh",
+          }}
+        >
           <span style={{ marginRight: "2vw" }}>
             问题类型：{record.problem?.name}
           </span>

@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Select } from "antd";
+import { Select, Flex } from "antd";
 import style from "./summary.module.scss";
 import getPersonLevel from "../../utils/GetPersonRiskLevel";
 import { unitApi } from "../../api";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface NumbersOfCardsInterface {
   peopleWtihUnsolvedRecords: PersonInfoInter[];
   userJWT: UserInfoInter;
   currentUnitId: number;
   handleChangeCurrentUnitId: (unid_id: number) => void;
+  openTableModal: () => void;
 }
 
 const NumbersOfCards: React.FC<NumbersOfCardsInterface> = ({
@@ -16,7 +18,10 @@ const NumbersOfCards: React.FC<NumbersOfCardsInterface> = ({
   userJWT,
   currentUnitId,
   handleChangeCurrentUnitId,
+  openTableModal,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [unitList, setUnitList] = useState<UnitInter[]>([]);
   const [numberInCard, setNumberInCard] = useState<any[]>([0, 0, 0]);
 
@@ -64,8 +69,16 @@ const NumbersOfCards: React.FC<NumbersOfCardsInterface> = ({
     handleChangeCurrentUnitId(unid_id);
   };
 
+  const handleCardClick = (number: number) => {
+    // 构建新的 URL，保持当前路径但添加 query 参数
+    const newSearch = new URLSearchParams(location.search);
+    newSearch.set("number", number.toString());
+    navigate(`${location.pathname}?${newSearch.toString()}`);
+    openTableModal();
+  };
+
   return (
-    <div className={style.flexcard} style={{ height: "30%" }}>
+    <Flex vertical style={{ height: "100%" }} justify="space-between">
       <div
         style={{
           display: "flex",
@@ -85,17 +98,14 @@ const NumbersOfCards: React.FC<NumbersOfCardsInterface> = ({
           ></Select>
         )}
       </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-        }}
-      >
+      <Flex justify="space-around" style={{ flex: 1 }}>
         <div
           className={style.numbercard}
           style={{
             background: "linear-gradient(to right, #bc0823, #f04646)",
+            cursor: "pointer",
           }}
+          onClick={() => handleCardClick(2)}
         >
           红牌人数
           <div className={style.numberofpeople}>{numberInCard[0].value}</div>
@@ -104,7 +114,9 @@ const NumbersOfCards: React.FC<NumbersOfCardsInterface> = ({
           className={style.numbercard}
           style={{
             background: "linear-gradient(to right, #E0A60F, #FFC50F)",
+            cursor: "pointer",
           }}
+          onClick={() => handleCardClick(1)}
         >
           黄牌人数
           <div className={style.numberofpeople}>{numberInCard[1].value}</div>
@@ -113,13 +125,15 @@ const NumbersOfCards: React.FC<NumbersOfCardsInterface> = ({
           className={style.numbercard}
           style={{
             background: "linear-gradient(to right, #039B0F, #2ED30F)",
+            cursor: "pointer",
           }}
+          onClick={() => handleCardClick(0)}
         >
           绿牌人数
           <div className={style.numberofpeople}>{numberInCard[2].value}</div>
         </div>
-      </div>
-    </div>
+      </Flex>
+    </Flex>
   );
 };
 

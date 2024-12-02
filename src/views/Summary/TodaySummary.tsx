@@ -61,7 +61,7 @@ const TodaySummary: React.FC<TodaySummaryInterface> = ({ currentUnitId }) => {
   };
 
   return (
-    <div className={style.flexcard} style={{ height: "30%" }}>
+    <>
       <p className={style.summayText}>
         {dateFormat(new Date(), "yyyy-mm-dd", true)}
       </p>
@@ -118,7 +118,7 @@ const TodaySummary: React.FC<TodaySummaryInterface> = ({ currentUnitId }) => {
           />
         </Flex>
       </Flex>
-    </div>
+    </>
   );
 };
 

@@ -45,7 +45,7 @@ const ResponsibleList: React.FC<ResposibleListInterface> = ({
     }
   };
   return (
-    <div className={style.flexcard} style={{ height: "70%", overflow: "auto" }}>
+    <>
       <p
         style={{
           fontSize: "1.2vw",
@@ -84,7 +84,7 @@ const ResponsibleList: React.FC<ResposibleListInterface> = ({
         })}
       </Flex>
       <ResponsibleModal ref={responsibleModalRef} />
-    </div>
+    </>
   );
 };
 
