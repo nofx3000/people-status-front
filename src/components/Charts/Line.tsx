@@ -93,28 +93,21 @@ const Line: FC<LineProps> = ({ unitId }) => {
 
   useEffect(() => {
     setOption({
-      title: {
-        text: "问题数量变化趋势图",
-        textAlign: "left",
-        textStyle: {
-          fontSize: 16,
-        },
-        // x: "center",
-        // y: "0",
-      },
       tooltip: {
         trigger: "axis",
       },
       legend: {
-        // top: "15%",
         bottom: 0,
         data: ["急迫", "重要", "一般"],
+        textStyle: {
+          color: '#fff'
+        }
       },
       grid: {
-        top: "12%",
+        top: "3%",
         left: "4%",
         right: "4%",
-        bottom: "12%",
+        bottom: "15%",
         containLabel: true,
       },
       xAxis: {

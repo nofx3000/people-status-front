@@ -94,13 +94,6 @@ const Bar: FC<BarProps> = () => {
   };
 
   const bar = () => ({
-    title: {
-      text: "各单位问题人员数量图",
-      textAlign: "left",
-      textStyle: {
-        fontSize: 16,
-      },
-    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -108,18 +101,26 @@ const Bar: FC<BarProps> = () => {
       },
     },
     grid: {
-      top: "6%",
-      bottom: "10%",
+      top: "3%",
+      bottom: "15%",
+      left: '10%',
+      right: '5%'
     },
     legend: {
       data: ["绿牌人数", "黄牌人数", "红牌人数"],
       bottom: "0",
+      textStyle: {
+        color: '#fff'
+      }
     },
     yAxis: [
       {
         type: "category",
         axisTick: { show: true },
         data: UnitInfo.length > 0 ? UnitInfo.map((unit) => unit.name) : [],
+        axisLabel: {
+          color: '#fff'
+        }
       },
     ],
     xAxis: [
@@ -127,6 +128,10 @@ const Bar: FC<BarProps> = () => {
         type: "value",
         // data: [100, 200, 300, 400, 500],
         position: "bottom",
+        splitLine: { show: false },
+        axisLabel: {
+          color: '#fff'
+        }
       },
     ],
     series: [

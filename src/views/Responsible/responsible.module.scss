@@ -1,4 +1,23 @@
 .card-container {
   display: flex;
   flex-wrap: wrap;
+  gap: 24px;
+  padding: 24px;
+}
+
+:global {
+  .ant-collapse {
+    background: rgba(4, 24, 50, 0.3);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-radius: 8px;
+  }
+
+  .ant-collapse-content {
+    background: transparent !important;
+    
+    .ant-collapse-content-box {
+      background: transparent;
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
 }

@@ -9,6 +9,69 @@
 }
 .table {
   margin-top: 1vh;
+
+  :global {
+    // 表格整体背景
+    .ant-table {
+      background: rgba(4, 24, 50, 0.3);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      border-radius: 8px;
+    }
+
+    // 表头
+    .ant-table-thead > tr > th {
+      background: rgba(0, 240, 255, 0.1) !important;
+      color: #00f0ff;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+
+      // 表头排序按钮
+      .ant-table-column-sorter {
+        color: rgba(0, 240, 255, 0.5);
+      }
+    }
+
+    // 表格内容行
+    .ant-table-tbody > tr > td {
+      background: transparent !important;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    // 鼠标悬停效果
+    .ant-table-tbody > tr:hover > td {
+      background: rgba(0, 240, 255, 0.05) !important;
+    }
+
+    // 分页器
+    .ant-pagination {
+      .ant-pagination-item, 
+      .ant-pagination-prev, 
+      .ant-pagination-next {
+        background: rgba(4, 24, 50, 0.3);
+        border-color: rgba(0, 240, 255, 0.3);
+        
+        a {
+          color: rgba(255, 255, 255, 0.8);
+        }
+
+        &:hover {
+          border-color: #00f0ff;
+          a {
+            color: #00f0ff;
+          }
+        }
+      }
+
+      .ant-pagination-item-active {
+        background: rgba(0, 240, 255, 0.1);
+        border-color: #00f0ff;
+        
+        a {
+          color: #00f0ff;
+        }
+      }
+    }
+  }
 }
 .dashboard-area {
   display: flex;

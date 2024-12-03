@@ -1,0 +1,306 @@
+.dashboard {
+    height: 93vh;
+    padding: 0.1vh 20px 20px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+  }
+  
+
+  
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  .card {
+    background: rgba(4, 24, 50, 0.3) !important;
+    border: 1px solid rgba(0, 240, 255, 0.3) !important;
+  }
+  
+  .cardCenter {
+    composes: card;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  
+  .shieldContainer {
+    position: relative;
+    width: 200px;
+    height: 200px;
+  }
+  
+  .shield {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    background: rgba(0, 240, 255, 0.1);
+    border: 2px solid #00f0ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00f0ff;
+    font-size: 18px;
+    z-index: 2;
+  }
+  
+  .circularProgress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .circle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid transparent;
+    border-top: 2px solid #00f0ff;
+    border-radius: 50%;
+    animation: rotate 4s linear infinite;
+  }
+  
+  .circle:nth-child(2) {
+    animation-direction: reverse;
+    border-top-color: #0ff;
+  }
+  
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .metrics {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: 40px;
+  }
+  
+  .metric {
+    text-align: center;
+    padding: 10px 20px;
+    background: rgba(0, 240, 255, 0.1);
+    border-radius: 4px;
+  }
+  
+  .metric span {
+    display: block;
+    &:first-child {
+      color: #888;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+    &:last-child {
+      color: #00f0ff;
+      font-size: 16px;
+      font-weight: bold;
+    }
+  }
+  
+  :global(.ant-card-head-title) {
+    color: #00f0ff !important;
+  }
+  
+  :global(.ant-card) {
+    color: #fff !important;
+  }
+  
+  .contentRow {
+    flex: 1;
+    height: 100%;
+  }
+  
+  .sideColumn {
+    height: 100%;
+  }
+  
+//   .sideRow {
+//     height: 93vh;
+//   }
+  
+  .moduleCard {
+    height: calc(100% - 12px);
+    margin-bottom: 0;
+  }
+  
+  .centerCard {
+    height: 100%;
+  }
+  
+  .chartContainer {
+    height: 100%;
+    width: 100%;
+  }
+  
+  :global(.ant-card-body) {
+    height: calc(100% - 57px) !important;
+    padding: 8px !important;
+  }
+  
+  .moduleContent {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .moduleHalf {
+    flex: 1;
+    width: 100%;
+    padding: 4px 0;
+    overflow: auto;
+    min-height: 0;
+  }
+  
+  .moduleHalf:first-child {
+    padding-top: 0;
+  }
+  
+  .moduleHalf:last-child {
+    padding-bottom: 0;
+  }
+  
+  :global(.ant-card-body > div) {
+    transform: scale(0.9);
+    transform-origin: top center;
+  }
+  
+  .centerRow {
+    // height: 100%;
+  }
+  
+  .centerImageContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .backgroundVideo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    mix-blend-mode: screen;
+    opacity: 0.8;
+  }
+  
+  .centerImage {
+    max-width: 70%;
+    max-height: 70%;
+    object-fit: contain;
+    position: absolute;
+    z-index: 1;
+    top: 45%;
+    transform: translateY(-50%);
+  }
+  
+  .centerImage:first-child {
+    z-index: 2;
+    max-width: 65%;
+    max-height: 65%;
+  }
+  
+  .centerImage:nth-child(2) {
+    z-index: 3;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  
+  .bottomImage {
+    z-index: 4;
+    top: 55%;
+    transform: scale(1.1);
+  }
+  
+  .bottomImage:last-child {
+    z-index: 5;
+    transform: translate(0, 15px) scale(1.4);
+  }
+  
+  .moduleWrapper {
+    height: 100%;
+    background: rgba(4, 24, 50, 0.3);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .moduleContent,
+  .chartContainer {
+    flex: 1;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .centerModule {
+    composes: moduleWrapper;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .moduleTitleImage {
+    height: 40px;
+    width: 100%;
+    object-fit: cover;
+    margin: -8px -8px 8px -8px;
+  }
+  
+  .moduleTitleWrapper {
+    position: relative;
+    margin: -8px -8px 8px -8px;
+  }
+  
+  .moduleTitleImage {
+    width: 100%;
+    height: 40px;
+    object-fit: cover;
+  }
+  
+  .moduleTitleText {
+    position: absolute;
+    top: 1.5vh;
+    left: 3vw;
+    transform: translateY(-50%);
+    color: #00f0ff;
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+    z-index: 10;
+  }
+  
+  

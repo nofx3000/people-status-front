@@ -1,4 +1,42 @@
 .card-container {
   display: flex;
   flex-wrap: wrap;
+  gap: 24px;
+  padding: 24px;
+}
+
+:global {
+  .ant-collapse {
+    background: rgba(4, 24, 50, 0.3);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-radius: 8px;
+  }
+
+  .ant-collapse-header {
+    background: rgba(0, 240, 255, 0.1) !important;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+    color: #00f0ff !important;
+
+    .ant-collapse-expand-icon {
+      color: rgba(0, 240, 255, 0.5);
+    }
+  }
+
+  .ant-collapse-content {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+    
+    .ant-collapse-content-box {
+      background: transparent;
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
+
+  .ant-collapse-item:hover > .ant-collapse-header {
+    background: rgba(0, 240, 255, 0.15) !important;
+  }
+
+  .ant-collapse-item-active > .ant-collapse-header {
+    border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+  }
 }

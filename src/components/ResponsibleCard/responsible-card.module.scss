@@ -1,11 +1,19 @@
 .card-wraper {
-  margin-right: 2vw;
   margin-bottom: 1vh;
+  flex: 1;
+  min-width: 300px;
+  max-width: 400px;
 }
 .card {
-  width: 18vw;
+  width: 100%;
+  background: rgba(4, 24, 50, 0.3) !important;
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  background-size: cover !important;
+  background-position: center !important;
+  backdrop-filter: blur(5px);
   p {
     margin: 0.5vh 0;
+    color: rgba(255, 255, 255, 0.8);
   }
   .button-area {
     float: right;
@@ -33,5 +41,9 @@
 }
 
 .data-card {
-  // padding-left: 2vw;
+  img {
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
 }

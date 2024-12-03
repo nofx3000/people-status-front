@@ -65,26 +65,21 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
   };
 
   const radar = () => ({
-    title: {
-      text: "各类问题人数环比图",
-      textAlign: "left",
-      textStyle: {
-        fontSize: 16,
-      },
-      // x: "center",
-      // y: "0",
-    },
     legend: {
       data: ["本月人数", "上月人数"],
       bottom: "0",
+      textStyle: {
+        color: '#fff'
+      }
     },
     radar: {
       radius: "70%",
-      center: ["50%", "53%"],
+      center: ["50%", "45%"],
       axisName: {
         width: 100,
         height: 100,
         overflow: "break",
+        color: '#fff'
       },
       // indicator和value不能为空数组，否则会报错“Cannot read properties of undefined (reading 'push')”
       indicator:

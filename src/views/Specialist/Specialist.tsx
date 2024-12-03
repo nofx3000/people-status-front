@@ -1,5 +1,5 @@
 import React from "react";
-import { Layout, Row, Col, Card } from "antd";
+import { Layout, Row, Col } from "antd";
 import Psychologist from "./Psychologist";
 import FAQ from "./FAQ";
 import Lawyer from "./Lawyer";
@@ -9,7 +9,7 @@ const { Content } = Layout;
 
 export default function Component() {
   return (
-    <Layout>
+    <Layout style={{ background: 'transparent' }}>
       <Content className={style.container}>
         <Row gutter={32}>
           <Col xs={24} lg={8} className={style.expertList}>

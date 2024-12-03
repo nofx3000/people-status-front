@@ -13,6 +13,7 @@ import Summary from "../views/Summary/Index";
 import Responsible from "../views/Responsible/Responsible";
 import RecordDetail from "../views/RecordDetail/RecordDetail";
 import Specialist from "../views/Specialist/Specialist";
+import Dashboard from "../views/Dashboard/Dashboard";
 
 const router = createHashRouter([
   {
@@ -28,8 +29,9 @@ const router = createHashRouter([
     ),
     children: [
       {
+        path: "/",
         index: true,
-        element: <Navigate to="/summary"></Navigate>,
+        element: <Dashboard />,
       },
       {
         path: "list",
@@ -55,6 +57,7 @@ const router = createHashRouter([
         path: "specialist",
         element: <Specialist />,
       },
+      
     ],
   },
 ]);

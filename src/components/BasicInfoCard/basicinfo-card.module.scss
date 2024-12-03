@@ -1,19 +1,81 @@
 .card-wraper {
-  margin-right: 2vw;
   margin-bottom: 1vh;
+  flex: 1;
+  min-width: 300px;
+  max-width: 400px;
 }
+
 .card {
-  width: 18vw;
-  p {
-    margin: 0.5vh 0;
-  }
-  .button-area {
-    float: right;
-    button {
-      margin-right: 0.5vw !important;
+  width: 100%;
+  background: rgba(4, 24, 50, 0.3) !important;
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  background-size: cover !important;
+  background-position: center !important;
+  backdrop-filter: blur(5px);
+
+  :global {
+    .ant-card-head {
+      background: rgba(0, 240, 255, 0.1);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+      color: #00f0ff;
+    }
+
+    .ant-card-body {
+      background: transparent;
+    }
+
+    .ant-btn {
+      background: rgba(4, 24, 50, 0.5);
+      border-color: rgba(0, 240, 255, 0.3);
+      color: rgba(255, 255, 255, 0.8);
+
+      &:hover {
+        background: rgba(0, 240, 255, 0.1);
+        border-color: #00f0ff;
+        color: #00f0ff;
+      }
+
+      &.ant-btn-dangerous {
+        border-color: rgba(255, 77, 79, 0.3);
+        color: #ff4d4f;
+
+        &:hover {
+          background: rgba(255, 77, 79, 0.1);
+          border-color: #ff4d4f;
+        }
+      }
+    }
+
+    .ant-form-item-label > label {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .ant-input,
+    .ant-select-selector,
+    .ant-radio-wrapper {
+      background: rgba(4, 24, 50, 0.3) !important;
+      border-color: rgba(0, 240, 255, 0.3) !important;
+      color: rgba(255, 255, 255, 0.8) !important;
+
+      &:hover {
+        border-color: #00f0ff !important;
+      }
     }
   }
+
+  p {
+    margin: 0.5vh 0;
+    color: rgba(255, 255, 255, 0.8);
+  }
 }
+
+.button-area {
+  float: right;
+  button {
+    margin-right: 0.5vw !important;
+  }
+}
+
 .form-item {
   margin-bottom: 1vh !important;
   button {
@@ -24,14 +86,22 @@
 .add {
   font-size: 2vh;
   font-weight: 600;
-  color: #194cf0;
+  color: #00f0ff;
   line-height: 20vh;
+  text-align: center;
+  display: block;
+  
   &:hover {
-    color: rgb(104, 139, 244);
+    color: rgba(0, 240, 255, 0.7);
     cursor: pointer;
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
   }
 }
 
 .data-card {
-  // padding-left: 2vw;
+  img {
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
 }
