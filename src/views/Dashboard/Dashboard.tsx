@@ -1,29 +1,28 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { Card, Row, Col, message, notification, Flex  } from 'antd';
+import React, { useRef, useEffect, useState } from "react";
+import { Card, Row, Col, message, notification, Flex } from "antd";
 import { toJS } from "mobx";
 import { personApi } from "../../api";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import store from "../../mobx_store/store";
-import styles from './Dashboard.module.scss';
+import styles from "./Dashboard.module.scss";
 import Radar from "../../components/Charts/Radar";
 import Line from "../../components/Charts/Line";
 import VerticalBar from "../../components/Charts/VerticalBar";
 import NumbersOfCards from "./NumbersOfCards";
-import DutyCorner from './DutyCorner';
-
+import DutyCorner from "./DutyCorner";
+import InfoCenter from "./InfoCenter";
 
 interface detailModalRefInteface {
-    setPersonId: (personId: number) => void;
-    setIsDetailModalOpen: (isDetailModalOpen: boolean) => void;
-  }
-  
-  interface tableModalRefInterface {
-    setIsTableModalOpen: (isOpen: boolean) => void;
-  }
-  
+  setPersonId: (personId: number) => void;
+  setIsDetailModalOpen: (isDetailModalOpen: boolean) => void;
+}
+
+interface tableModalRefInterface {
+  setIsTableModalOpen: (isOpen: boolean) => void;
+}
 
 export default function Dashboard() {
-    const detailModalRef = useRef<detailModalRefInteface>(null);
+  const detailModalRef = useRef<detailModalRefInteface>(null);
   const tableModalRef = useRef<tableModalRefInterface>(null);
   const [api, contextHolder] = notification.useNotification({
     stack: true
@@ -224,132 +223,116 @@ export default function Dashboard() {
     tableModalRef.current?.setIsTableModalOpen(true);
   };
 
-    return (
-        <div className={styles.dashboard}>
-            <Row gutter={[24, 24]} className={styles.contentRow}>
-                <Col span={7} className={styles.sideColumn}>
-                    <Row className={styles.sideRow}>
-                        <Col span={24} style={{ height: '30vh', paddingBottom: 12 }}>
-                            <div className={`${styles.moduleWrapper}`}>
-                                <div className={styles.moduleTitleWrapper}>
-                                    <img 
-                                        src="/GIF动效 (22).png" 
-                                        alt="title-effect"
-                                        className={styles.moduleTitleImage}
-                                    />
-                                    <span className={styles.moduleTitleText}>总览</span>
-                                </div>
-                                <div className={styles.moduleContent}>
-                                    <div className={styles.moduleHalf}>
-                                        <NumbersOfCards
-                                            peopleWtihUnsolvedRecords={peopleWtihUnsolvedRecords}
-                                            userJWT={userJWT}
-                                            currentUnitId={currentUnitId}
-                                            handleChangeCurrentUnitId={handleChangeCurrentUnitId}
-                                            openTableModal={openTableModal}
-                                        />
-                                    </div>
-                                    {/* <div className={styles.moduleHalf}>
+  return (
+    <div className={styles.dashboard}>
+      <Row gutter={[24, 24]} className={styles.contentRow}>
+        <Col span={7} className={styles.sideColumn}>
+          <Row className={styles.sideRow}>
+            <Col span={24} style={{ height: "30vh", paddingBottom: 12 }}>
+              <div className={`${styles.moduleWrapper}`}>
+                <div className={styles.moduleTitleWrapper}>
+                  <img
+                    src="/GIF动效 (22).png"
+                    alt="title-effect"
+                    className={styles.moduleTitleImage}
+                  />
+                  <span className={styles.moduleTitleText}>总览</span>
+                </div>
+                <div className={styles.moduleContent}>
+                  <div className={styles.moduleHalf}>
+                    <NumbersOfCards
+                      peopleWtihUnsolvedRecords={peopleWtihUnsolvedRecords}
+                      userJWT={userJWT}
+                      currentUnitId={currentUnitId}
+                      handleChangeCurrentUnitId={handleChangeCurrentUnitId}
+                      openTableModal={openTableModal}
+                    />
+                  </div>
+                  {/* <div className={styles.moduleHalf}>
                                         <TodaySummary currentUnitId={1} />
                                     </div> */}
-                                </div>
-                            </div>
-                        </Col>
-                        <Col span={24} style={{ height: '60vh', paddingTop: 12 }}>
-                            <div className={`${styles.moduleWrapper}`}>
-                                <div className={styles.moduleTitleWrapper}>
-                                    <img 
-                                        src="/GIF动效 (22).png" 
-                                        alt="title-effect"
-                                        className={styles.moduleTitleImage}
-                                    />
-                                    <span className={styles.moduleTitleText}>各单位问题人员数量图</span>
-                                </div>
-                                <div className={styles.chartContainer}>
-                                    <VerticalBar />
-                                </div>
-                            </div>
-                        </Col>
-                    </Row>
-                </Col>
+                </div>
+              </div>
+            </Col>
+            <Col span={24} style={{ height: "60vh", paddingTop: 12 }}>
+              <div className={`${styles.moduleWrapper}`}>
+                <div className={styles.moduleTitleWrapper}>
+                  <img
+                    src="/GIF动效 (22).png"
+                    alt="title-effect"
+                    className={styles.moduleTitleImage}
+                  />
+                  <span className={styles.moduleTitleText}>
+                    各单位问题人员数量图
+                  </span>
+                </div>
+                <div className={styles.chartContainer}>
+                  <VerticalBar />
+                </div>
+              </div>
+            </Col>
+          </Row>
+        </Col>
 
-                <Col span={10}>
-                  <Row className={styles.centerRow}>
-                    <Col span={24} style={{ height: '60vh', paddingBottom: 12 }}>
-                      <div className={`${styles.moduleWrapper} ${styles.centerModule}`}>
-                        <div className={styles.centerImageContainer}>
-                          <img 
-                            src="/GIF动效 (13).png" 
-                            alt="gif-effect" 
-                            className={styles.centerImage}
-                          />
-                          <img 
-                            src="/kv-shield.png" 
-                            alt="shield" 
-                            className={styles.centerImage}
-                          />
-                          <img 
-                            src="/GIF动效 (41).png" 
-                            alt="gif-effect-bottom" 
-                            className={`${styles.centerImage} ${styles.bottomImage}`}
-                          />
-                          <img 
-                            src="/GIF动效 (103).gif" 
-                            alt="gif-effect-overlap" 
-                            className={`${styles.centerImage} ${styles.bottomImage}`}
-                          />
-                        </div>
-                      </div>
-                    </Col>
-                    <Col span={24} style={{ height: '30vh', paddingTop: 12 }}>
-                      <div className={`${styles.moduleWrapper}`}>
-                        <div className={styles.moduleTitleWrapper}>
-                            <img 
-                                src="/GIF动效 (22).png" 
-                                alt="title-effect"
-                                className={styles.moduleTitleImage}
-                            />
-                            <span className={styles.moduleTitleText}>法律及心理辅导专家</span>
-                        </div>
-                        {/* 中间下部模块内容 */}
-                        <DutyCorner />
-                      </div>
-                    </Col>
-                  </Row>
-                </Col>
+        <Col span={10}>
+          <Row className={styles.centerRow}>
+            <Col span={24} style={{ height: "60vh", paddingBottom: 12 }}>
+              <InfoCenter />
+            </Col>
+            <Col span={24} style={{ height: "30vh", paddingTop: 12 }}>
+              <div className={`${styles.moduleWrapper}`}>
+                <div className={styles.moduleTitleWrapper}>
+                  <img
+                    src="/GIF动效 (22).png"
+                    alt="title-effect"
+                    className={styles.moduleTitleImage}
+                  />
+                  <span className={styles.moduleTitleText}>
+                    法律及心理辅导专家
+                  </span>
+                </div>
+                {/* 中间下部模块内容 */}
+                <DutyCorner />
+              </div>
+            </Col>
+          </Row>
+        </Col>
 
-                <Col span={7} className={styles.sideColumn}>
-                    <Row className={styles.sideRow}>
-                        <Col span={24} style={{ height: '45vh', paddingBottom: 12 }}>
-                            <div className={`${styles.moduleWrapper}`}>
-                                <div className={styles.moduleTitleWrapper}>
-                                    <img 
-                                        src="/GIF动效 (22).png" 
-                                        alt="title-effect"
-                                        className={styles.moduleTitleImage}
-                                    />
-                                    <span className={styles.moduleTitleText}>问题数量变化趋势图</span>
-                                </div>
-                                <Line unitId={1}></Line>
-                            </div>
-                        </Col>
-                        <Col span={24} style={{ height: '45vh', paddingTop: 12 }}>
-                            <div className={`${styles.moduleWrapper}`}>
-                                <div className={styles.moduleTitleWrapper}>
-                                    <img 
-                                        src="/GIF动效 (22).png" 
-                                        alt="title-effect"
-                                        className={styles.moduleTitleImage}
-                                    />
-                                    <span className={styles.moduleTitleText}>各类问题人数环比图</span>
-                                </div>
-                                <Radar unitId={1}></Radar>
-                            </div>
-                        </Col>
-                    </Row>
-                </Col>
-            </Row>
-        </div>
-    );
+        <Col span={7} className={styles.sideColumn}>
+          <Row className={styles.sideRow}>
+            <Col span={24} style={{ height: "45vh", paddingBottom: 12 }}>
+              <div className={`${styles.moduleWrapper}`}>
+                <div className={styles.moduleTitleWrapper}>
+                  <img
+                    src="/GIF动效 (22).png"
+                    alt="title-effect"
+                    className={styles.moduleTitleImage}
+                  />
+                  <span className={styles.moduleTitleText}>
+                    问题数量变化趋势图
+                  </span>
+                </div>
+                <Line unitId={1}></Line>
+              </div>
+            </Col>
+            <Col span={24} style={{ height: "45vh", paddingTop: 12 }}>
+              <div className={`${styles.moduleWrapper}`}>
+                <div className={styles.moduleTitleWrapper}>
+                  <img
+                    src="/GIF动效 (22).png"
+                    alt="title-effect"
+                    className={styles.moduleTitleImage}
+                  />
+                  <span className={styles.moduleTitleText}>
+                    各类问题人数环比图
+                  </span>
+                </div>
+                <Radar unitId={1}></Radar>
+              </div>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </div>
+  );
 }
-

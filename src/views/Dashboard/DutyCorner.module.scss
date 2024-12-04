@@ -12,10 +12,10 @@
   background: rgba(4, 24, 50, 0.3);
   border: 1px solid rgba(0, 240, 255, 0.3);
   border-radius: 8px;
-  padding: 12px;
-  width: 120px;
+  padding: 4px;
   display: flex;
   flex-direction: column;
+  flex: 1;
   align-items: center;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -64,4 +64,4 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   height: 32px;
-} 
+}

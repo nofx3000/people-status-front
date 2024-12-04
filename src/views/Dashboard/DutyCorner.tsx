@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, Avatar, Typography } from "antd";
-import styles from './DutyCorner.module.scss';
+import styles from "./DutyCorner.module.scss";
 
 const { Title, Text } = Typography;
 
