@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { Flex, message, Upload } from "antd";
 import type { GetProp, UploadProps } from "antd";
+import { BASR_API_URL } from "../../constant";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
@@ -59,7 +60,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ setAvatarURL }) => {
       listType="picture-card"
       className="avatar-uploader"
       showUploadList={false}
-      action="http://localhost:3000/api/upload/avatar"
+      action={`${BASR_API_URL}/upload/avatar`}
       beforeUpload={beforeUpload}
       onChange={handleChange}
     >

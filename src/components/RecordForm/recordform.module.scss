@@ -1,0 +1,29 @@
+.form {
+  :global {
+    .ant-form-item-label > label {
+      color: rgba(255, 255, 255, 0.8) !important;
+    }
+
+    .ant-select {
+      background: rgba(4, 24, 50, 0.3);
+      
+      .ant-select-selector {
+        background: transparent !important;
+        border-color: rgba(0, 240, 255, 0.3) !important;
+        color: rgba(255, 255, 255, 0.8) !important;
+      }
+    }
+
+    .ant-btn {
+      background: rgba(4, 24, 50, 0.3);
+      border-color: rgba(0, 240, 255, 0.3);
+      color: #00f0ff;
+
+      &:hover {
+        background: rgba(0, 240, 255, 0.1);
+        border-color: #00f0ff;
+        color: #00f0ff;
+      }
+    }
+  }
+}

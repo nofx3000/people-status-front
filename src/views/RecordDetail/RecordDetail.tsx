@@ -7,6 +7,8 @@ import getLevel from "../../utils/GetPersonRiskLevel";
 import formatCatagory from "../../utils/FormatCatagory";
 import { useNavigate } from "react-router-dom";
 import { personApi } from "../../api";
+import styles from "./recorddetail.module.scss";
+import { BASR_API_URL } from "../../constant";
 
 export default function RecordDetail() {
   const { person_id: string_person_id } = useParams();
@@ -43,27 +45,35 @@ export default function RecordDetail() {
 
     const level = getLevel(personInfo.records as RecordInter[]);
     return (
-      <div style={{ marginRight: "30vw" }}>
-        <p>基本情况</p>
-        <Flex gap={30}>
+      <div className={styles.moduleWrapper}>
+        <div className={styles.moduleTitleWrapper}>
           <img
-            src={`http://localhost:3000/api/upload/avatar${personInfo.avatar}`}
-            style={{ height: "20vh", width: "18vh" }}
-          ></img>
-          <div>
-            <p>姓名：{personInfo.name}</p>
-            <p>类别：{formatCatagory(personInfo.catagory as number)}</p>
-            <p>婚姻状况：{personInfo.married ? "是" : "否"}</p>
-            <div
-              style={{
-                height: "3vh",
-                width: "2vw",
-                backgroundColor:
-                  level === 1 ? "#E0A60F" : level === 2 ? "red" : "green",
-              }}
-            ></div>
-          </div>
-        </Flex>
+            src="/GIF动效 (22).png"
+            alt="title-effect"
+            className={styles.moduleTitleImage}
+          />
+          <span className={styles.moduleTitleText}>基本情况</span>
+        </div>
+        <div className={styles.moduleContent}>
+          <Flex gap={30}>
+            <img
+              src={`${BASR_API_URL}/upload/avatar${personInfo.avatar}`}
+              className={styles.avatar}
+            />
+            <div className={styles.info}>
+              <p>姓名：{personInfo.name}</p>
+              <p>类别：{formatCatagory(personInfo.catagory as number)}</p>
+              <p>婚姻状况：{personInfo.married ? "是" : "否"}</p>
+              <div
+                className={styles.riskLevel}
+                style={{
+                  backgroundColor:
+                    level === 1 ? "#E0A60F" : level === 2 ? "red" : "green",
+                }}
+              />
+            </div>
+          </Flex>
+        </div>
       </div>
     );
   };
@@ -71,25 +81,32 @@ export default function RecordDetail() {
   const Responsible = () => {
     if (!personInfo) return <p>loading...</p>;
     return (
-      <>
-        {personInfo.responsible ? (
-          <div>
-            <p>负责人</p>
+      <div className={styles.moduleWrapper}>
+        <div className={styles.moduleTitleWrapper}>
+          <img
+            src="/GIF动效 (22).png"
+            alt="title-effect"
+            className={styles.moduleTitleImage}
+          />
+          <span className={styles.moduleTitleText}>负责人</span>
+        </div>
+        <div className={styles.moduleContent}>
+          {personInfo.responsible ? (
             <Flex gap={30}>
               <img
-                src={`http://localhost:3000/api/upload/avatar${personInfo.responsible?.avatar}`}
-                style={{ height: "20vh", width: "18vh" }}
-              ></img>
-              <div>
+                src={`${BASR_API_URL}/upload/avatar${personInfo.responsible?.avatar}`}
+                className={styles.avatar}
+              />
+              <div className={styles.info}>
                 <p>姓名：{personInfo.responsible?.name}</p>
                 <p>特点：{personInfo.responsible?.description}</p>
               </div>
             </Flex>
-          </div>
-        ) : (
-          <p>尚未分配负责人，请尽快分配</p>
-        )}
-      </>
+          ) : (
+            <p>尚未分配负责人，请尽快分配</p>
+          )}
+        </div>
+      </div>
     );
   };
 
@@ -99,13 +116,13 @@ export default function RecordDetail() {
         <Button
           type="primary"
           onClick={onAddButtonClick}
-          style={{ marginTop: "2vh" }}
+          className={styles.addButton}
         >
           添加问题
         </Button>
       )}
       {isAdding ? (
-        <Card style={{ width: "70vw", marginTop: "2vh" }}>
+        <Card className={styles.formCard}>
           <RecordForm
             fetchPersonInfo={fetchPersonInfo}
             setIsAdding={setIsAdding}
@@ -122,33 +139,49 @@ export default function RecordDetail() {
     if (personInfo.records.length === 0)
       return <p>尚未添加问题，请点击上方按钮尽快添加！</p>;
     return (
-      <div>
-        {personInfo.records.map((record, index) => (
-          <RecordDevelopment
-            fetchPersonInfo={fetchPersonInfo}
-            record={record}
-            key={index}
-          ></RecordDevelopment>
-        ))}
+      <div className={styles.moduleWrapper}>
+        <div className={styles.moduleTitleWrapper}>
+          <img
+            src="/GIF动效 (22).png"
+            alt="title-effect"
+            className={styles.moduleTitleImage}
+          />
+          <span className={styles.moduleTitleText}>问题记录</span>
+        </div>
+        <div className={styles.moduleContent}>
+          <div>
+            {personInfo.records.map((record, index) => (
+              <RecordDevelopment
+                fetchPersonInfo={fetchPersonInfo}
+                record={record}
+                key={index}
+              ></RecordDevelopment>
+            ))}
+          </div>
+        </div>
       </div>
     );
   };
 
   return (
-    <>
-      <Flex vertical>
-        <Button style={{ width: "10vw" }} onClick={handlerGoBack}>
-          🔙返回上一页
-        </Button>
-        <Flex>
+    <Flex vertical>
+      <Button className={styles.backButton} onClick={handlerGoBack}>
+        🔙返回上一页
+      </Button>
+
+      <Flex gap={24} justify="space-between">
+        <div style={{ width: '20vw' }}>
           <BasicInfo />
+        </div>
+
+        <div style={{ width: '20vw' }}>
           <Responsible />
-        </Flex>
-        <AddRecord />
-        <div>
-          <RecordList />
         </div>
       </Flex>
-    </>
+
+      <AddRecord />
+
+      <RecordList />
+    </Flex>
   );
 }

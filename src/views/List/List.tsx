@@ -11,6 +11,7 @@ import { CaretRightOutlined } from "@ant-design/icons";
 import getPersonLevel from "../../utils/GetPersonRiskLevel";
 import getRecordLevel from "../../utils/GetRecordLevel";
 import { personApi } from "../../api";
+import { BASR_API_URL } from "../../constant";
 
 const App: React.FC = () => {
   const [userJWT, setUserJWT] = useState<any>([]);
@@ -84,7 +85,7 @@ const App: React.FC = () => {
       width: 65,
       render: (_, person) => (
         <img
-          src={`http://localhost:3000/api/upload/avatar${person.avatar}`}
+          src={`${BASR_API_URL}/upload/avatar${person.avatar}`}
           style={{ width: "8vw", height: "16vh" }}
         ></img>
       ),
@@ -211,7 +212,7 @@ const App: React.FC = () => {
       render: (_, person) =>
         person.responsible?.avatar ? (
           <img
-            src={`http://localhost:3000/api/upload/avatar${person.responsible?.avatar}`}
+            src={`${BASR_API_URL}/upload/avatar${person.responsible?.avatar}`}
             style={{ width: "8vw", height: "16vh" }}
           ></img>
         ) : (

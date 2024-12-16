@@ -5,6 +5,7 @@ import { App as globalAntd } from "antd";
 import AvatarUpload from "../AvatarUpload/AvatarUpload";
 import defaultAvatar from "../../images/avatar.jpeg";
 import { responsibleApi } from "../../api";
+import { BASR_API_URL } from "../../constant";
 
 interface CardProps {
   unit_id: number;
@@ -105,7 +106,7 @@ const App: React.FC<CardProps> = (props: CardProps) => {
           <img
             src={
               responsibleinfo.avatar
-                ? `http://localhost:3000/api/upload/avatar${responsibleinfo.avatar}`
+                ? `${BASR_API_URL}/upload/avatar${responsibleinfo.avatar}`
                 : defaultAvatar
             }
             alt="Avatar"

@@ -11,6 +11,7 @@ import {
 } from "@arco-design/web-react";
 import "@arco-design/web-react/dist/css/arco.css";
 import { recordApi, llmApi } from "../../api";
+import styles from './recorddevelopment.module.scss';
 
 interface RecordDevelopmentProps {
   record: RecordInter;
@@ -117,8 +118,8 @@ const RecordDevelopment: React.FC<RecordDevelopmentProps> = ({
         console.log("res:", res, "level:", ai_risk_level);
         const riskLevelNum =
           ai_risk_level === "0" ||
-          ai_risk_level === "1" ||
-          ai_risk_level === "2"
+            ai_risk_level === "1" ||
+            ai_risk_level === "2"
             ? parseInt(ai_risk_level)
             : undefined;
 
@@ -139,6 +140,7 @@ const RecordDevelopment: React.FC<RecordDevelopmentProps> = ({
         name="control-hooks"
         onFinish={onFinish}
         style={{ maxWidth: "40vw" }}
+        className={styles.developmentForm}
       >
         <Form.Item name="detail" label="具体描述" rules={[{ required: true }]}>
           <TextArea
@@ -179,13 +181,13 @@ const RecordDevelopment: React.FC<RecordDevelopmentProps> = ({
             value={risk_level}
             onChange={(value) => setRisk_level(value)}
           >
-            <Radio value={0} style={{ color: "green" }}>
+            <Radio value={0} className={styles['green-radio']}>
               一般
             </Radio>
-            <Radio value={1} style={{ color: "#E0A60F" }}>
+            <Radio value={1} className={styles['yellow-radio']}>
               重要
             </Radio>
-            <Radio value={2} style={{ color: "red" }}>
+            <Radio value={2} className={styles['red-radio']}>
               急迫
             </Radio>
           </Radio.Group>
@@ -219,8 +221,8 @@ const RecordDevelopment: React.FC<RecordDevelopmentProps> = ({
                 development.risk_level === 0
                   ? "green"
                   : development.risk_level === 1
-                  ? "#E0A60F"
-                  : "red",
+                    ? "#E0A60F"
+                    : "red",
             }}
           ></div>
           <p>详情：{development.detail}</p>
@@ -243,19 +245,17 @@ const RecordDevelopment: React.FC<RecordDevelopmentProps> = ({
   );
 
   return (
-    <Watermark content={record.is_closed ? "已完结" : undefined}>
-      <Card
-        style={{
-          marginTop: "2vh",
-          // backgroundColor: record.is_closed ? "darkgray" : "",
-        }}
-      >
-        <div
-          style={{
-            marginBottom: "2vh",
-          }}
-        >
-          <span style={{ marginRight: "2vw" }}>
+    <Watermark 
+      content={record.is_closed ? "已完结" : undefined}
+      fontStyle={{
+        color: 'rgba(255, 255, 255, 0.5)',
+        fontSize: 16,
+        fontWeight: 'bold'
+      }}
+    >
+      <Card className={styles.moduleWrapper}>
+        <div className={styles.header}>
+          <span className={styles.problemType}>
             问题类型：{record.problem?.name}
           </span>
 
@@ -263,34 +263,67 @@ const RecordDevelopment: React.FC<RecordDevelopmentProps> = ({
             <span>已于{dateFormat(record.updatedAt, "yyyy-mm-dd")}完结</span>
           ) : (
             <>
-              <span style={{ marginRight: "2vw" }}>
+              <span className={styles.recordTime}>
                 记录时间:{dateFormat(record.updatedAt, "yyyy-mm-dd")}
               </span>
               <Button
                 type="primary"
-                onClick={() => {
-                  setIsAdding(true);
-                }}
+                onClick={() => setIsAdding(true)}
+                className={styles.actionButton}
               >
                 添加问题详情记录
               </Button>
               <Popconfirm
                 title="确认"
                 description="是否确认完结?"
-                onConfirm={() => {
-                  onProblemClose();
-                }}
+                onConfirm={onProblemClose}
               >
-                <Button style={{ marginLeft: "2vw" }}>完结</Button>
+                <Button className={styles.actionButton}>完结</Button>
               </Popconfirm>
             </>
           )}
         </div>
-        {isAdding && <DevelopmentForm />}
+
+        {isAdding && (
+          <DevelopmentForm
+          />
+        )}
+
         {record.record_Developments?.length === 0 ? (
-          <p>目前尚没有问题详情记录，请点击“添加问题详情记录”按钮添加！</p>
+          <p>目前尚没有问题详情记录，请点击"添加问题详情记录"按钮添加！</p>
         ) : (
-          <TimeLineComponent />
+          <Timeline direction="horizontal" mode="top" labelPosition="relative" className={styles.timeline}>
+            {record.record_Developments?.map((development) => (
+              <TimelineItem
+                label={dateFormat(development.updatedAt, "yyyy-mm-dd")}
+                key={development.id}
+              >
+                <div
+                  className={styles.riskLevel}
+                  style={{
+                    backgroundColor:
+                      development.risk_level === 0
+                        ? "green"
+                        : development.risk_level === 1
+                          ? "#E0A60F"
+                          : "red",
+                  }}
+                />
+                <p>详情：{development.detail}</p>
+                <p>措施：{development.measure}</p>
+                <p>备注：{development.comment}</p>
+                <Popconfirm
+                  title="确认"
+                  description="是否确认删除?"
+                  onConfirm={() => onDelete(development.id as number)}
+                >
+                  <Button className={`${styles.actionButton} ${styles.danger}`}>
+                    删除
+                  </Button>
+                </Popconfirm>
+              </TimelineItem>
+            ))}
+          </Timeline>
         )}
       </Card>
     </Watermark>

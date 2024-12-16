@@ -18,9 +18,10 @@
 
 .header {
   text-align: center;
-  height: fit-content;
-  position: relative;
-  flex: 0 1 auto;
+  width: 500px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .title {
@@ -63,14 +64,18 @@
 .navLinks {
   display: flex;
   align-items: center;
-  flex: 0 1 auto;
+  width: 500px;
+  justify-content: space-between;
   
   & > a {
-    margin-right: 48px;
-    
-    &:last-child {
-      margin-right: 0;
-    }
+    flex: 1;
+    text-align: center;
+    margin-right: 0;
+    padding: 6px 8px;
+  }
+
+  & > a:last-child {
+    margin-right: 0;
   }
 
   &:first-child > a {
@@ -81,8 +86,9 @@
 
   &:last-child > a {
     &:nth-child(1) { transform: translateY(1vh); }
-    &:nth-child(2) { transform: translateY(0vh); }
-    &:nth-child(3) { transform: translateY(-1vh); }
+    &:nth-child(2) { transform: translateY(0.5vh); }
+    &:nth-child(3) { transform: translateY(-0.5vh); }
+    &:nth-child(4) { transform: translateY(-1vh); }
   }
 }
 

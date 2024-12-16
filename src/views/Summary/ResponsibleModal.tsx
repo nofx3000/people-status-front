@@ -2,6 +2,7 @@ import { useState, useImperativeHandle, forwardRef } from "react";
 import { Modal, Flex } from "antd";
 import defaultAvatar from "../../images/avatar.jpeg";
 import formatCatagory from "../../utils/FormatCatagory";
+import { BASR_API_URL } from "../../constant";
 
 const ResponsibleModal = forwardRef((props, ref) => {
   const [isResponsibleModalOpen, setIsResponsibleModalOpen] = useState(false);
@@ -36,7 +37,7 @@ const ResponsibleModal = forwardRef((props, ref) => {
               <img
                 src={
                   person.avatar
-                    ? `http://localhost:3000/api/upload/avatar${person.avatar}`
+                    ? `${BASR_API_URL}/upload/avatar${person.avatar}`
                     : defaultAvatar
                 }
                 alt="Avatar"

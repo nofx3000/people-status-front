@@ -13,7 +13,8 @@ export default function NaviBar() {
 
   const rightLinks = [
     { path: '/responsible', label: '责任人管理' },
-    { path: '/specialist', label: '专家管理' },
+    { path: '/specialist', label: '咨询专家' },
+    { path: '/policy', label: '政策制度查询' },
     { path: '/login', label: '退出系统' },
   ];
 

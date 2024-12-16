@@ -5,6 +5,7 @@ import { CaretRightOutlined } from "@ant-design/icons";
 import getRecordLevel from "../../utils/GetRecordLevel";
 import { personApi } from "../../api";
 import defaultAvatar from "../../images/avatar.jpeg";
+import { BASR_API_URL } from "../../constant";
 
 const DetailModal = forwardRef((props, ref) => {
   const [personId, setPersonId] = useState<number>();
@@ -54,7 +55,7 @@ const DetailModal = forwardRef((props, ref) => {
             <img
               src={
                 personDetail.avatar
-                  ? `http://localhost:3000/api/upload/avatar${personDetail.avatar}`
+                  ? `${BASR_API_URL}/upload/avatar${personDetail.avatar}`
                   : defaultAvatar
               }
               alt="Avatar"

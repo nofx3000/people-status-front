@@ -3,16 +3,14 @@ import styles from "./InfoCenter.module.scss";
 
 const InfoCenter = () => {
   const indicators = [
-    { label: "运动比率", value: "3.9%" },
-    { label: "非流动比率", value: "1.1%" },
-    { label: "资产负债率", value: "1.2%" },
-    { label: "流动比率", value: "8.1%" },
-    { label: "净利润", value: "20.1%" },
-    { label: "运动比率", value: "3.9%" },
-    { label: "非流动比率", value: "1.1%" },
-    { label: "资产负债率", value: "1.2%" },
-    { label: "流动比率", value: "8.1%" },
-    { label: "净利润", value: "20.1%" },
+    { label: "刘某某", value: "现实需求强烈" },
+    { label: "孙某某", value: "涉及职级调整" },
+    { label: "邓某", value: "家庭发生重大变故" },
+    { label: "雷某", value: "涉及大额借款" },
+    { label: "王某某", value: "拟晋升高级士官" },
+    { label: "刘某", value: "转业待移交" },
+    { label: "胡某某", value: "长期公出" },
+    { label: "何某某", value: "专业与新岗位不符" },
   ];
 
   // 计算每个卡片的角度

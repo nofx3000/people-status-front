@@ -5,6 +5,7 @@ import { Button, Form, Input, Select, Space, Radio, FormInstance } from "antd";
 import { App as globalAntd } from "antd";
 import { useParams } from "react-router-dom";
 import { recordApi } from "../../api";
+import styles from './recordform.module.scss';
 
 interface RecordFormProps {
   fetchPersonInfo?: (personid: number) => void;
@@ -74,6 +75,7 @@ const RecordForm = forwardRef<any, RecordFormProps>(
         name="control-hooks"
         onFinish={onFinish}
         style={{ maxWidth: 600 }}
+        className={styles.form}
         // initialValues={editRecord ? editRecord : undefined}
       >
         <Form.Item

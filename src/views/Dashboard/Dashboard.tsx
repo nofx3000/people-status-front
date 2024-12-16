@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Card, Row, Col, message, notification, Flex } from "antd";
 import { toJS } from "mobx";
-import { personApi } from "../../api";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import store from "../../mobx_store/store";
 import styles from "./Dashboard.module.scss";
@@ -24,37 +23,29 @@ interface tableModalRefInterface {
 export default function Dashboard() {
   const detailModalRef = useRef<detailModalRefInteface>(null);
   const tableModalRef = useRef<tableModalRefInterface>(null);
-  const [api, contextHolder] = notification.useNotification({
-    stack: true
-      ? {
-          threshold: 3,
-        }
-      : false,
-  });
+  // const [api, contextHolder] = notification.useNotification({
+  //   stack: true
+  //     ? {
+  //         threshold: 3,
+  //       }
+  //     : false,
+  // });
 
   const [userJWT, setUserJWT] = useState<UserInfoInter>({});
   const [currentUnitId, setCurrentUnitId] = useState<number>(
     userJWT.unit_id as number
   );
-  const [peopleWtihUnsolvedRecords, setPeopleWtihUnsolvedRecords] = useState<
-    PersonInfoInter[]
-  >([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const userJWT = await fetchUserJWT();
-      await fetchPeopleByUnitId(userJWT.unit_id);
-    };
-    fetchData();
-  }, []);
 
-  useEffect(() => {
-    if (userJWT.role !== "admin") return;
-    const updates = toJS(store.updates);
-    if (updates.length > 0) {
-      updates.forEach(handleOpenNotification);
-    }
-  }, [store.updates, userJWT.role]);
+
+
+  // useEffect(() => {
+  //   if (userJWT.role !== "admin") return;
+  //   const updates = toJS(store.updates);
+  //   if (updates.length > 0) {
+  //     updates.forEach(handleOpenNotification);
+  //   }
+  // }, [store.updates, userJWT.role]);
 
   const fetchUserJWT = async (): Promise<any> => {
     await store.getUserJWT();
@@ -64,39 +55,35 @@ export default function Dashboard() {
     return userJWT;
   };
 
-  const fetchPeopleByUnitId = async (unit_id: number) => {
-    try {
-      const res = await personApi.getPeopleByUnitId(unit_id);
-      if (res.status === 200) {
-        setPeopleWtihUnsolvedRecords(res.data.data.peopleWithUnsolvedRecords);
-      }
-    } catch (err) {
-      message.error("获取数据失败");
-    }
-  };
+  useEffect(() => {
+    fetchUserJWT();
+  }, []);
 
-  const handleOpenNotification = (record: RecordInter) => {
-    if (
-      !record ||
-      !record.record_Developments ||
-      record.record_Developments.length === 0
-    )
-      return;
-    api.open({
-      message: (
-        <p>
-          {record.record_Developments && record.record_Developments?.length > 1
-            ? `变化情况`
-            : `新增情况`}
-        </p>
-      ),
-      description: NotificationDescription(record),
-      duration: null,
-      onClose: () => {
-        store.deleteUpdatedRecord(record.id as number);
-      },
-    });
-  };
+
+
+
+  // const handleOpenNotification = (record: RecordInter) => {
+  //   if (
+  //     !record ||
+  //     !record.record_Developments ||
+  //     record.record_Developments.length === 0
+  //   )
+  //     return;
+  //   api.open({
+  //     message: (
+  //       <p>
+  //         {record.record_Developments && record.record_Developments?.length > 1
+  //           ? `变化情况`
+  //           : `新增情况`}
+  //       </p>
+  //     ),
+  //     description: NotificationDescription(record),
+  //     duration: null,
+  //     onClose: () => {
+  //       store.deleteUpdatedRecord(record.id as number);
+  //     },
+  //   });
+  // };
 
   const handleChangeCurrentUnitId = (unid_id: number) => {
     setCurrentUnitId(unid_id);
@@ -241,7 +228,6 @@ export default function Dashboard() {
                 <div className={styles.moduleContent}>
                   <div className={styles.moduleHalf}>
                     <NumbersOfCards
-                      peopleWtihUnsolvedRecords={peopleWtihUnsolvedRecords}
                       userJWT={userJWT}
                       currentUnitId={currentUnitId}
                       handleChangeCurrentUnitId={handleChangeCurrentUnitId}
@@ -312,7 +298,7 @@ export default function Dashboard() {
                     问题数量变化趋势图
                   </span>
                 </div>
-                <Line unitId={1}></Line>
+                <Line unitId={currentUnitId}></Line>
               </div>
             </Col>
             <Col span={24} style={{ height: "45vh", paddingTop: 12 }}>
@@ -327,7 +313,7 @@ export default function Dashboard() {
                     各类问题人数环比图
                   </span>
                 </div>
-                <Radar unitId={1}></Radar>
+                {currentUnitId !== undefined && <Radar unitId={currentUnitId}></Radar>}
               </div>
             </Col>
           </Row>

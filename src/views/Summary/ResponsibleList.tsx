@@ -4,7 +4,7 @@ import { Button, Flex, message } from "antd";
 import defaultAvatar from "../../images/avatar.jpeg";
 import ResponsibleModal from "./ResponsibleModal";
 import { responsibleApi } from "../../api";
-
+import { BASR_API_URL } from "../../constant";
 interface responsibleModalRefInteface {
   setResponsibleDetail: (responsible: ResponsibleInter) => void;
   setIsResponsibleModalOpen: (isResponsibleModalOpen: boolean) => void;
@@ -63,7 +63,7 @@ const ResponsibleList: React.FC<ResposibleListInterface> = ({
               <img
                 src={
                   responsible.avatar
-                    ? `http://localhost:3000/api/upload/avatar${responsible.avatar}`
+                    ? `${BASR_API_URL}/upload/avatar${responsible.avatar}`
                     : defaultAvatar
                 }
                 className={style.backboneAvatar}

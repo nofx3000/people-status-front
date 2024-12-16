@@ -9,6 +9,7 @@ import AvatarUpload from "../AvatarUpload/AvatarUpload";
 import formatCatagory from "../../utils/FormatCatagory";
 import defaultAvatar from "../../images/avatar.jpeg";
 import { personApi, responsibleApi } from "../../api";
+import { BASR_API_URL } from "../../constant";
 
 interface CardProps {
   unit_id: number;
@@ -127,7 +128,7 @@ const App: React.FC<CardProps> = (props: CardProps) => {
           <img
             src={
               personinfo.avatar
-                ? `http://localhost:3000/api/upload/avatar${personinfo.avatar}`
+                ? `${BASR_API_URL}/upload/avatar${personinfo.avatar}`
                 : defaultAvatar
             }
             alt="Avatar"

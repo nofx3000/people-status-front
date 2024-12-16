@@ -27,6 +27,7 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
   const [indicator, setIndicator] = useState<indicatorInter[]>([]);
 
   useEffect(() => {
+    console.log('unitedID in Radar useEffect', unitId);
     fetchProblemList();
   }, [unitId]);
 
@@ -54,7 +55,7 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
     try {
       const res = await recordApi.getRadarData(unitId);
       if (res.status === 200) {
-        console.log(res.data.data);
+        console.log('res.data in fetchProblemList', res.data.data);
 
         setThisMonthProblemList(res.data.data.thisMonth);
         setLastMonthProblemList(res.data.data.lastMonth);

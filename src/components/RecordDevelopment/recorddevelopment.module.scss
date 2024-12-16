@@ -1,0 +1,197 @@
+.moduleWrapper {
+  background: rgba(4, 24, 50, 0.3);
+  border: 1px solid rgba(0, 240, 255, 1);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  color: rgba(255, 255, 255, 0.8);
+
+  .problemType {
+    margin-right: 24px;
+  }
+
+  .recordTime {
+    margin-right: 24px;
+  }
+
+  .actionButton {
+    background: rgba(4, 24, 50, 0.3);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    color: #00f0ff;
+    margin-right: 16px;
+
+    &:hover {
+      background: rgba(0, 240, 255, 0.1);
+      border-color: #00f0ff;
+      color: #00f0ff;
+    }
+
+    &.danger {
+      border-color: rgba(255, 77, 79, 0.3);
+      color: #ff4d4f;
+
+      &:hover {
+        background: rgba(255, 77, 79, 0.1);
+        border-color: #ff4d4f;
+      }
+    }
+  }
+}
+
+.form {
+  margin-bottom: 24px;
+
+  :global {
+    .ant-form-item-label > label {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .ant-input,
+    .ant-input-textarea {
+      background: rgba(4, 24, 50, 0.3);
+      border-color: rgba(0, 240, 255, 0.3);
+      color: rgba(255, 255, 255, 0.8);
+
+      &:hover, &:focus {
+        border-color: #00f0ff;
+      }
+    }
+
+    .ant-radio-wrapper {
+      color: rgba(255, 255, 255, 0.8);
+
+      .ant-radio-checked .ant-radio-inner {
+        border-color: #00f0ff;
+        background-color: #00f0ff;
+      }
+    }
+  }
+}
+
+.timeline {
+  :global {
+    .arco-timeline-item-content {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .arco-timeline-item-dot {
+      border-color: rgba(0, 240, 255, 0.3);
+    }
+
+    .arco-timeline-item-line {
+      border-color: rgba(0, 240, 255, 0.3);
+    }
+  }
+
+  .riskLevel {
+    height: 16px;
+    width: 16px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+
+  p {
+    margin: 8px 0;
+  }
+}
+
+.watermark {
+  :global {
+    .arco-watermark {
+      color: #FFFFFF !important;
+    }
+
+    .ant-card {
+      background: rgba(4, 24, 50, 0.3);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      margin-top: 16px;
+
+      .ant-card-body {
+        background: transparent;
+      }
+    }
+  }
+}
+
+.developmentForm {
+  :global {
+    .ant-form-item-label > label {
+      color: rgba(255, 255, 255, 0.8) !important;
+    }
+
+    .ant-input,
+    .ant-input-textarea {
+      background: rgba(4, 24, 50, 0.3) !important;
+      border-color: rgba(0, 240, 255, 0.3) !important;
+      color: rgba(255, 255, 255, 0.8) !important;
+
+      &:hover, &:focus {
+        border-color: #00f0ff !important;
+      }
+    }
+
+    .arco-radio-group {
+      .arco-radio {
+        .arco-radio-text {
+          color: rgba(255, 255, 255, 0.8);
+        }
+
+        &.arco-radio-checked .arco-radio-text {
+          color: #00f0ff;
+        }
+      }
+    }
+
+    .green-radio {
+      .arco-radio-text {
+        color: #039B0F !important;
+      }
+      &.arco-radio-checked .arco-radio-text {
+        color: #039B0F !important;
+      }
+    }
+
+    .yellow-radio {
+      .arco-radio-text {
+        color: #E0A60F !important;
+      }
+      &.arco-radio-checked .arco-radio-text {
+        color: #E0A60F !important;
+      }
+    }
+
+    .red-radio {
+      .arco-radio-text {
+        color: #ff4d4f !important;
+      }
+      &.arco-radio-checked .arco-radio-text {
+        color: #ff4d4f !important;
+      }
+    }
+
+    .ant-btn {
+      background: rgba(4, 24, 50, 0.3);
+      border-color: rgba(0, 240, 255, 0.3);
+      color: #00f0ff;
+      margin-top: 8px;
+
+      &:hover {
+        background: rgba(0, 240, 255, 0.1);
+        border-color: #00f0ff;
+        color: #00f0ff;
+      }
+
+      &[disabled] {
+        background: rgba(4, 24, 50, 0.1);
+        border-color: rgba(0, 240, 255, 0.1);
+        color: rgba(0, 240, 255, 0.5);
+      }
+    }
+  }
+}
