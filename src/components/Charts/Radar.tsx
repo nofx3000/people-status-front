@@ -54,6 +54,8 @@ const Radar: FC<RadarProps> = ({ unitId }) => {
   const fetchProblemList = async () => {
     try {
       const res = await recordApi.getRadarData(unitId);
+      console.log('unitId in fetchProblemList', unitId);
+      console.log('res in fetchProblemList', res);
       if (res.status === 200) {
         console.log('res.data in fetchProblemList', res.data.data);
 
