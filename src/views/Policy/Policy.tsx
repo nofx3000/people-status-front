@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, message } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { Card, Button, message, Row, Col } from 'antd';
 import styles from './policy.module.scss';
 
 interface Document {
   name: string;
   path: string;
-  size: number;
-  updateTime: string;
+  avatar: string;
   type: 'pdf' | 'docx';
 }
 
@@ -15,49 +13,38 @@ export default function Policy() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const formatFileSize = (bytes: number): string => {
-    if (bytes < 1024) return bytes + ' B';
-    else if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+  const getImageUrl = (path: string) => {
+    // 如果路径已经是完整的URL，直接返回
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+    // 否则添加基础URL
+    return `${process.env.REACT_APP_API_URL || ''}${path}`;
   };
 
   const loadDocuments = async () => {
     setLoading(true);
     try {
-      // 直接读取 policy_documents 文件夹中的文件
-      const response = await fetch('/policy_documents');
-      const text = await response.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(text, 'text/html');
-      const links = Array.from(doc.getElementsByTagName('a'));
-      
-      const docs: Document[] = [];
-      
-      for (const link of links) {
-        const href = link.getAttribute('href');
-        if (!href) continue;
-        
-        const name = href.split('/').pop() || '';
-        if (!name.endsWith('.pdf') && !name.endsWith('.docx')) continue;
-        
-        const type = name.endsWith('.pdf') ? 'pdf' : 'docx';
-        
-        try {
-          const fileResponse = await fetch(href, { method: 'HEAD' });
-          const size = Number(fileResponse.headers.get('content-length')) || 0;
-          
-          docs.push({
-            name,
-            path: href,
-            size,
-            updateTime: new Date().toISOString(),
-            type,
-          });
-        } catch (error) {
-          console.error(`Failed to get file info for ${name}:`, error);
+      const docs: Document[] = [
+        {
+          name: 'Appointment_Letter_PEK147200465125.pdf',
+          path: '/policy_documents/Appointment_Letter_PEK147200465125.pdf',
+          avatar: '/policy_documents/Appointment_Letter_PEK147200465125.jpg',
+          type: 'pdf',
+        },
+        {
+          name: 'Appointment_Letter_PEK147200465125.pdf',
+          path: '/policy_documents/Appointment_Letter_PEK147200465125.pdf',
+          avatar: '/policy_documents/Appointment_Letter_PEK147200465125.jpg',
+          type: 'pdf',
+        },
+        {
+          name: 'Appointment_Letter_PEK147200465125.pdf',
+          path: '/policy_documents/Appointment_Letter_PEK147200465125.pdf',
+          avatar: '/policy_documents/Appointment_Letter_PEK147200465125.jpg',
+          type: 'pdf',
         }
-      }
-      
+      ];
       setDocuments(docs);
     } catch (error) {
       console.error('Failed to load documents:', error);
@@ -69,7 +56,7 @@ export default function Policy() {
 
   const handleDownload = (doc: Document) => {
     const link = document.createElement('a');
-    link.href = doc.path;
+    link.href = getImageUrl(doc.path);
     link.download = doc.name;
     document.body.appendChild(link);
     link.click();
@@ -77,59 +64,60 @@ export default function Policy() {
   };
 
   const handlePreview = (doc: Document) => {
-    window.open(doc.path, '_blank');
+    window.open(getImageUrl(doc.path), '_blank');
   };
 
   useEffect(() => {
     loadDocuments();
   }, []);
 
-  const columns: ColumnsType<Document> = [
-    {
-      title: '文档名称',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: '大小',
-      dataIndex: 'size',
-      key: 'size',
-      width: 120,
-      render: (_, record) => formatFileSize(record.size),
-    },
-    {
-      title: '更新时间',
-      dataIndex: 'updateTime',
-      key: 'updateTime',
-      width: 180,
-    },
-    {
-      title: '操作',
-      key: 'action',
-      width: 120,
-      render: (_, record) => (
-        <>
-          <Button type="link" onClick={() => handleDownload(record)}>
-            下载
-          </Button>
-          <Button type="link" onClick={() => handlePreview(record)}>
-            预览
-          </Button>
-        </>
-      ),
-    },
-  ];
-
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>政策文档</h1>
-      <Table
-        columns={columns}
-        dataSource={documents}
-        rowKey="path"
-        loading={loading}
-        pagination={false}
-      />
+      <Row gutter={[24, 24]} className={styles.cardContainer}>
+        {documents.map((doc) => (
+          <Col xs={24} sm={12} md={8} key={doc.path}>
+            <Card
+              hoverable
+              loading={loading}
+              className={styles.documentCard}
+              cover={
+                <div className={styles.cardCover}>
+                  {doc.avatar ? (
+                    <img 
+                      src={getImageUrl(doc.avatar)} 
+                      alt={doc.name}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => {
+                        console.error('Image failed to load:', getImageUrl(doc.avatar));
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  ) : (
+                    doc.type === 'pdf' ? (
+                      <span>PDF</span>
+                    ) : (
+                      <span>DOC</span>
+                    )
+                  )}
+                </div>
+              }
+              actions={[
+                <Button type="link" onClick={() => handlePreview(doc)}>
+                  预览
+                </Button>,
+                <Button type="link" onClick={() => handleDownload(doc)}>
+                  下载
+                </Button>,
+              ]}
+            >
+              <Card.Meta
+                title={doc.name}
+              />
+            </Card>
+          </Col>
+        ))}
+      </Row>
     </div>
   );
 }
