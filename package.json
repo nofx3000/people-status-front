@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^6.0.0",
     "@ant-design/plots": "^2.3.2",
     "@arco-design/web-react": "^2.63.1",
     "@reduxjs/toolkit": "^1.9.1",
