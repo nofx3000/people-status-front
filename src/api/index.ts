@@ -7,3 +7,4 @@ export * from "./modules/unit";
 export * from "./modules/menu";
 export * from "./modules/summary";
 export * from "./modules/llm";
+export * from "./modules/record_development";
