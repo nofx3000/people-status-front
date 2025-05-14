@@ -1,7 +1,6 @@
-import React, { useRef, useEffect, useState } from "react";
-import { Card, Row, Col, message, notification, Flex } from "antd";
+import { useRef, useEffect, useState } from "react";
+import { Row, Col, message } from "antd";
 import { toJS } from "mobx";
-import { ArrowRightOutlined } from "@ant-design/icons";
 import store from "../../mobx_store/store";
 import styles from "./Dashboard.module.scss";
 import Radar from "../../components/Charts/Radar";
@@ -10,6 +9,9 @@ import VerticalBar from "../../components/Charts/VerticalBar";
 import NumbersOfCards from "./NumbersOfCards";
 import DutyCorner from "./DutyCorner";
 import InfoCenter from "./InfoCenter";
+import ResponsibleList from "./ResponsibleList";
+import TableModal from "./TableModal";
+import { personApi } from "../../api/modules/person";
 
 interface detailModalRefInteface {
   setPersonId: (personId: number) => void;
@@ -23,70 +25,57 @@ interface tableModalRefInterface {
 export default function Dashboard() {
   const detailModalRef = useRef<detailModalRefInteface>(null);
   const tableModalRef = useRef<tableModalRefInterface>(null);
-  // const [api, contextHolder] = notification.useNotification({
-  //   stack: true
-  //     ? {
-  //         threshold: 3,
-  //       }
-  //     : false,
-  // });
 
   const [userJWT, setUserJWT] = useState<UserInfoInter>({});
-  const [currentUnitId, setCurrentUnitId] = useState<number>(
-    userJWT.unit_id as number
-  );
-
-
-
-
-  // useEffect(() => {
-  //   if (userJWT.role !== "admin") return;
-  //   const updates = toJS(store.updates);
-  //   if (updates.length > 0) {
-  //     updates.forEach(handleOpenNotification);
-  //   }
-  // }, [store.updates, userJWT.role]);
+  const [currentUnitId, setCurrentUnitId] = useState<number | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
+  const [peopleWtihUnsolvedRecords, setPeopleWtihUnsolvedRecords] = useState<
+    PersonInfoInter[]
+  >([]);
 
   const fetchUserJWT = async (): Promise<any> => {
-    await store.getUserJWT();
-    const userJWT = toJS(store.userInfo);
-    setUserJWT(userJWT as UserInfoInter);
-    setCurrentUnitId((userJWT as UserInfoInter).unit_id as number);
-    return userJWT;
+    try {
+      await store.getUserJWT();
+      const userJWT = toJS(store.userInfo) as UserInfoInter;
+      setUserJWT(userJWT);
+      if (userJWT.unit_id) {
+        setCurrentUnitId(userJWT.unit_id);
+      }
+      return userJWT;
+    } catch (err) {
+      message.error("获取用户信息失败");
+      return null;
+    }
+  };
+
+  const fetchPeopleByUnitId = async (unit_id: number) => {
+    try {
+      const res = await personApi.getPeopleByUnitId(unit_id);
+      if (res.status === 200) {
+        setPeopleWtihUnsolvedRecords(res.data.data.peopleWithUnsolvedRecords);
+      }
+    } catch (err) {
+      message.error("获取数据失败");
+    }
   };
 
   useEffect(() => {
-    fetchUserJWT();
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const userJWT = await fetchUserJWT();
+        if (userJWT && userJWT.unit_id) {
+          await fetchPeopleByUnitId(userJWT.unit_id);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
-
-
-
-  // const handleOpenNotification = (record: RecordInter) => {
-  //   if (
-  //     !record ||
-  //     !record.record_Developments ||
-  //     record.record_Developments.length === 0
-  //   )
-  //     return;
-  //   api.open({
-  //     message: (
-  //       <p>
-  //         {record.record_Developments && record.record_Developments?.length > 1
-  //           ? `变化情况`
-  //           : `新增情况`}
-  //       </p>
-  //     ),
-  //     description: NotificationDescription(record),
-  //     duration: null,
-  //     onClose: () => {
-  //       store.deleteUpdatedRecord(record.id as number);
-  //     },
-  //   });
-  // };
-
-  const handleChangeCurrentUnitId = (unid_id: number) => {
-    setCurrentUnitId(unid_id);
+  const handleChangeCurrentUnitId = (unit_id: number) => {
+    setCurrentUnitId(unit_id);
   };
 
   const onDetailClick = async (personId: number) => {
@@ -94,116 +83,6 @@ export default function Dashboard() {
       detailModalRef.current.setPersonId(personId);
       detailModalRef.current.setIsDetailModalOpen(true);
     }
-  };
-
-  const NotificationDescription = (record: RecordInter) => {
-    const RecordDetail = () => {
-      if (
-        record.record_Developments &&
-        record.record_Developments?.length === 1
-      ) {
-        const cur_level = record.record_Developments[0]?.risk_level;
-        return (
-          <div>
-            <div
-              style={{
-                width: "50px",
-                height: "20px",
-                borderRadius: "1vh",
-                backgroundColor:
-                  cur_level === 0
-                    ? "green"
-                    : cur_level === 1
-                    ? "#E0A60F"
-                    : "#c23531",
-              }}
-            />
-            <p>详情: {record.record_Developments[0]?.detail}</p>
-            <p>措施: {record.record_Developments[0]?.measure}</p>
-          </div>
-        );
-      } else if (
-        record.record_Developments &&
-        record.record_Developments?.length > 1
-      ) {
-        console.log(record.record_Developments);
-        const cur =
-          record.record_Developments[record.record_Developments.length - 1];
-        const pre =
-          record.record_Developments[record.record_Developments.length - 2];
-        return (
-          <Flex vertical={false} justify="space-between">
-            <div style={{ width: "35%" }}>
-              <div
-                style={{
-                  width: "100%",
-                  height: "20px",
-                  borderRadius: "1vh",
-                  backgroundColor:
-                    pre.risk_level === 0
-                      ? "green"
-                      : pre.risk_level === 1
-                      ? "#E0A60F"
-                      : "#c23531",
-                }}
-              />
-              <p>
-                详情:{" "}
-                {pre.detail && pre.detail.length > 30
-                  ? `${pre.detail.slice(0, 30)}...`
-                  : pre.detail}
-              </p>
-              <p>
-                措施:{" "}
-                {pre.measure && pre.measure.length > 30
-                  ? `${pre.measure.slice(0, 30)}...`
-                  : pre.measure}
-              </p>
-            </div>
-            <ArrowRightOutlined style={{ fontSize: "3vh" }} />
-            <div style={{ width: "35%" }}>
-              <div
-                style={{
-                  width: "100%",
-                  height: "20px",
-                  borderRadius: "1vh",
-                  backgroundColor:
-                    cur.risk_level === 0
-                      ? "green"
-                      : cur.risk_level === 1
-                      ? "#E0A60F"
-                      : "#c23531",
-                }}
-              />
-              <p>
-                详情:{" "}
-                {cur.detail && cur.detail.length > 30
-                  ? `${cur.detail.slice(0, 30)}...`
-                  : cur.detail}
-              </p>
-              <p>
-                措施:{" "}
-                {cur.measure && cur.measure.length > 30
-                  ? `${cur.measure.slice(0, 30)}...`
-                  : cur.measure}
-              </p>
-            </div>
-          </Flex>
-        );
-      }
-    };
-
-    return (
-      <>
-        <p>
-          {record.record_Developments && record.record_Developments?.length > 1
-            ? `${record.person?.name} 关于 ${record.problem?.name} 问题的情况变化`
-            : `${record.person?.name} 新增了关于 ${record.problem?.name} 问题的情况`}
-        </p>
-        <p></p>
-        {RecordDetail()}
-      </>
-    );
   };
 
   const openTableModal = () => {
@@ -227,12 +106,17 @@ export default function Dashboard() {
                 </div>
                 <div className={styles.moduleContent}>
                   <div className={styles.moduleHalf}>
-                    <NumbersOfCards
-                      userJWT={userJWT}
-                      currentUnitId={currentUnitId}
-                      handleChangeCurrentUnitId={handleChangeCurrentUnitId}
-                      openTableModal={openTableModal}
-                    />
+                    {currentUnitId !== undefined ? (
+                      <NumbersOfCards
+                        peopleWtihUnsolvedRecords={peopleWtihUnsolvedRecords}
+                        userJWT={userJWT}
+                        currentUnitId={currentUnitId}
+                        handleChangeCurrentUnitId={handleChangeCurrentUnitId}
+                        openTableModal={openTableModal}
+                      />
+                    ) : (
+                      <div style={{ textAlign: 'center', padding: '20px' }}>加载中...</div>
+                    )}
                   </div>
                   {/* <div className={styles.moduleHalf}>
                                         <TodaySummary currentUnitId={1} />
@@ -249,11 +133,28 @@ export default function Dashboard() {
                     className={styles.moduleTitleImage}
                   />
                   <span className={styles.moduleTitleText}>
-                    各单位问题人员数量图
+                  {userJWT.role === "admin" ? (
+                    "各单位问题人员数量图"
+                  ) : (
+                    "骨干队伍"
+                  )}
+                    
                   </span>
                 </div>
                 <div className={styles.chartContainer}>
-                  <VerticalBar />
+                  {userJWT.role === "admin" ? (
+                    <VerticalBar />
+                  ) : (
+                    <div style={{marginLeft: "2vw", height: "100%", overflow: "auto"}}>
+                      {isLoading ? (
+                        <div style={{ textAlign: 'center', padding: '20px' }}>加载中...</div>
+                      ) : currentUnitId !== undefined ? (
+                        <ResponsibleList currentUnitId={currentUnitId}/>
+                      ) : (
+                        <div style={{ textAlign: 'center', padding: '20px' }}>暂无数据</div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </Col>
@@ -298,7 +199,11 @@ export default function Dashboard() {
                     问题数量变化趋势图
                   </span>
                 </div>
-                <Line unitId={currentUnitId}></Line>
+                {currentUnitId !== undefined ? (
+                  <Line unitId={currentUnitId}></Line>
+                ) : (
+                  <div style={{ textAlign: 'center', padding: '20px' }}>加载中...</div>
+                )}
               </div>
             </Col>
             <Col span={24} style={{ height: "45vh", paddingTop: 12 }}>
@@ -313,12 +218,21 @@ export default function Dashboard() {
                     各类问题人数环比图
                   </span>
                 </div>
-                {currentUnitId !== undefined && <Radar unitId={currentUnitId}></Radar>}
+                {currentUnitId !== undefined ? (
+                  <Radar unitId={currentUnitId}></Radar>
+                ) : (
+                  <div style={{ textAlign: 'center', padding: '20px' }}>加载中...</div>
+                )}
               </div>
             </Col>
           </Row>
         </Col>
       </Row>
+      <TableModal
+        ref={tableModalRef}
+        peopleWtihUnsolvedRecords={peopleWtihUnsolvedRecords}
+        onDetailClick={onDetailClick}
+      />
     </div>
   );
 }

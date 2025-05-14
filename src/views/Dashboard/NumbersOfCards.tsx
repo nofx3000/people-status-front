@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Select, Flex, message } from "antd";
+import { Select, Flex } from "antd";
 import style from "./NumbersOfCards.module.scss";
 import getPersonLevel from "../../utils/GetPersonRiskLevel";
 import { unitApi } from "../../api";
 import { useNavigate, useLocation } from "react-router-dom";
-import { personApi } from "../../api";
 
 interface NumbersOfCardsInterface {
+  peopleWtihUnsolvedRecords: PersonInfoInter[];
   userJWT: UserInfoInter;
   currentUnitId: number;
   handleChangeCurrentUnitId: (unid_id: number) => void;
@@ -14,6 +14,7 @@ interface NumbersOfCardsInterface {
 }
 
 const NumbersOfCards: React.FC<NumbersOfCardsInterface> = ({
+  peopleWtihUnsolvedRecords,
   userJWT,
   currentUnitId,
   handleChangeCurrentUnitId,
@@ -23,22 +24,10 @@ const NumbersOfCards: React.FC<NumbersOfCardsInterface> = ({
   const location = useLocation();
   const [unitList, setUnitList] = useState<UnitInter[]>([]);
   const [numberInCard, setNumberInCard] = useState<any[]>([0, 0, 0]);
-  const [peopleWtihUnsolvedRecords, setPeopleWtihUnsolvedRecords] = useState<
-  PersonInfoInter[]
->([]);
-
-
 
   useEffect(() => {
     fetchUnitList();
   }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      await fetchPeopleByUnitId(currentUnitId);
-    };
-    fetchData();
-  }, [currentUnitId]);
 
   useEffect(() => {
     countNumberInCard(peopleWtihUnsolvedRecords);
@@ -53,18 +42,6 @@ const NumbersOfCards: React.FC<NumbersOfCardsInterface> = ({
       }
     } catch (error) {
       console.error("Error fetching unit list:", error);
-    }
-  };
-
-  const fetchPeopleByUnitId = async (unit_id: number) => {
-    try {
-      const res = await personApi.getPeopleByUnitId(unit_id);
-      console.log("++++++++++++++++++++++++++++++++++++++++++++++++", unit_id);
-      if (res.status === 200) {
-        setPeopleWtihUnsolvedRecords(res.data.data.peopleWithUnsolvedRecords);
-      }
-    } catch (err) {
-      message.error("获取数据失败");
     }
   };
 
