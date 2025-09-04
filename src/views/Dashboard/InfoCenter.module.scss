@@ -58,8 +58,8 @@
 
 .indicator {
   position: absolute;
-  width: 80px;
-  height: 60px;
+  width: 100px;
+  height: 80px;
   background: rgba(4, 24, 50, 0.7);
   border: 1px solid rgba(0, 240, 255, 0.5);
   border-radius: 4px;
@@ -81,13 +81,13 @@
 }
 
 .label {
-  font-size: 14px;
+  font-size: 12px;
   color: rgba(255, 255, 255, 0.8);
   margin-bottom: 4px;
 }
 
 .value {
-  font-size: 20px;
+  font-size: 16px;
   color: #00f0ff;
   font-weight: bold;
   text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);

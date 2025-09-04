@@ -52,7 +52,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       const userJWTData = await fetchUserJWT();
-      if (userJWTData !== null) {
+        if (userJWTData !== null && userJWTData["unit_id"] !== undefined && userJWTData["unit_id"] !== null) {
         fetchPeopleData(userJWTData["unit_id"]);
         fetchResponsibleData(userJWTData["unit_id"]);
       }

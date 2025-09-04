@@ -38,7 +38,7 @@ const Summary: React.FC = () => {
 
   const [userJWT, setUserJWT] = useState<UserInfoInter>({});
   const [currentUnitId, setCurrentUnitId] = useState<number>(
-    userJWT.unit_id as number
+    userJWT.unit_id !== undefined ? userJWT.unit_id as number : 0
   );
   const [peopleWtihUnsolvedRecords, setPeopleWtihUnsolvedRecords] = useState<
     PersonInfoInter[]
@@ -47,7 +47,10 @@ const Summary: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       const userJWT = await fetchUserJWT();
-      await fetchPeopleByUnitId(userJWT.unit_id);
+      // 修复：admin用户的unit_id为0时也应该获取数据
+      if (userJWT && (userJWT.unit_id !== undefined && userJWT.unit_id !== null)) {
+        await fetchPeopleByUnitId(userJWT.unit_id);
+      }
     };
     fetchData();
   }, []);

@@ -53,7 +53,11 @@ const InfoCenter = () => {
               }}
             >
               <span className={styles.label}>{item.record?.person?.name}</span>
-              <span className={styles.value}>{item.detail}</span>
+              <span className={styles.value}>
+                {item.detail && item.detail.length > 20 
+                  ? `${item.detail.substring(0, 20)}...` 
+                  : item.detail}
+              </span>
             </div>
           ))}
         </div>

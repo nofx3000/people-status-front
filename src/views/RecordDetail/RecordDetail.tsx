@@ -112,7 +112,7 @@ export default function RecordDetail() {
 
   const AddRecord = () => (
     <>
-      {isAdding ? null : (
+      {!isAdding ? (
         <Button
           type="primary"
           onClick={onAddButtonClick}
@@ -120,12 +120,13 @@ export default function RecordDetail() {
         >
           添加问题
         </Button>
-      )}
+      ) : null}
       {isAdding ? (
         <Card className={styles.formCard}>
           <RecordForm
             fetchPersonInfo={fetchPersonInfo}
             setIsAdding={setIsAdding}
+            isEditMode={false}
           />
         </Card>
       ) : null}

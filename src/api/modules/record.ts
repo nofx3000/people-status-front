@@ -17,6 +17,14 @@ export const recordApi = {
   deleteRecordDevelopment: (developmentId: number) =>
     request.delete<ApiResponse<any>>(`/record-development/${developmentId}`),
 
+  // 更新记录发展
+  updateRecordDevelopment: (developmentId: number, data: RecordDevelopmentInter) =>
+    request.put<ApiResponse<any>>(`/record-development/${developmentId}`, data),
+
+  // 更新记录
+  updateRecord: (recordId: number, data: RecordInter) =>
+    request.put<ApiResponse<any>>(`/record/${recordId}`, data),
+
   // 关闭问题
   closeRecord: (recordId: number) =>
     request.put<ApiResponse<any>>(`/record/${recordId}`, { is_closed: true }),
@@ -32,4 +40,8 @@ export const recordApi = {
   // 获取单位已解决的记录
   getSolvedRecords: (unitId: number) =>
     request.get<ApiResponse<RecordInter[]>>(`/record/unit/${unitId}/solved`),
+
+  // 删除记录
+  deleteRecord: (recordId: number) =>
+    request.delete<ApiResponse<any>>(`/record/${recordId}`),
 };

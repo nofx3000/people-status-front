@@ -89,7 +89,7 @@ const NumbersOfCards: React.FC<NumbersOfCardsInterface> = ({
         {userJWT.role === "admin" && (
           <Select
             disabled={userJWT.role !== "admin"}
-            defaultValue={currentUnitId}
+            value={currentUnitId}
             placeholder="请选择单位"
             style={{ width: 120 }}
             onChange={handleSelectChange}

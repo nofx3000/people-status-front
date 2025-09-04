@@ -38,7 +38,8 @@ export default function Dashboard() {
       await store.getUserJWT();
       const userJWT = toJS(store.userInfo) as UserInfoInter;
       setUserJWT(userJWT);
-      if (userJWT.unit_id) {
+      // 修复：admin用户的unit_id为0时也应该设置currentUnitId
+      if (userJWT.unit_id !== undefined && userJWT.unit_id !== null) {
         setCurrentUnitId(userJWT.unit_id);
       }
       return userJWT;
@@ -64,7 +65,8 @@ export default function Dashboard() {
       setIsLoading(true);
       try {
         const userJWT = await fetchUserJWT();
-        if (userJWT && userJWT.unit_id) {
+        // 修复：admin用户的unit_id为0时也应该获取数据
+        if (userJWT && (userJWT.unit_id !== undefined && userJWT.unit_id !== null)) {
           await fetchPeopleByUnitId(userJWT.unit_id);
         }
       } finally {

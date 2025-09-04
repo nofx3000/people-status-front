@@ -1,19 +1,22 @@
 import React, { FC, useEffect, useState, forwardRef, LegacyRef } from "react";
 import { toJS } from "mobx";
 import store from "../../mobx_store/store";
-import { Button, Form, Input, Select, Space, Radio, FormInstance } from "antd";
+import { Button, Form, Input, Select, Space, Radio, FormInstance, DatePicker } from "antd";
 import { App as globalAntd } from "antd";
 import { useParams } from "react-router-dom";
 import { recordApi } from "../../api";
+import dayjs from "dayjs";
 import styles from './recordform.module.scss';
 
 interface RecordFormProps {
   fetchPersonInfo?: (personid: number) => void;
   setIsAdding: (isAdding: boolean) => void;
+  editRecord?: RecordInter | null;
+  isEditMode?: boolean;
 }
 
 const RecordForm = forwardRef<any, RecordFormProps>(
-  ({ fetchPersonInfo, setIsAdding }, ref) => {
+  ({ fetchPersonInfo, setIsAdding, editRecord, isEditMode = false }, ref) => {
     const { person_id: string_person_id } = useParams();
     const person_id = string_person_id ? Number(string_person_id) : 0;
     const [problemsList, setProblemsList] = useState<ProblemInter[]>([]);
@@ -31,18 +34,39 @@ const RecordForm = forwardRef<any, RecordFormProps>(
       fetchProblemsData();
     }, []);
 
+    useEffect(() => {
+      if (isEditMode && editRecord) {
+        form.setFieldsValue({
+          problem_id: editRecord.problem_id,
+          updatedAt: editRecord.updatedAt ? dayjs(editRecord.updatedAt) : undefined,
+        });
+      }
+    }, [isEditMode, editRecord, form]);
+
     const onFinish = async (values: RecordInter) => {
       const uploadData: RecordInter = {
         ...values,
+        updatedAt: values.updatedAt ? dayjs(values.updatedAt as any).toDate() : new Date(),
         // unit_id: (toJS(store.userInfo) as any)["unit_id"],
-
         person_id: person_id ? person_id : 0,
       };
+      
+      if (isEditMode && editRecord?.id) {
+        uploadData.id = editRecord.id;
+      }
+      
+      console.log(uploadData);
 
       try {
-        const res = await recordApi.addRecord(uploadData);
+        let res;
+        if (isEditMode && editRecord?.id) {
+          res = await recordApi.updateRecord(editRecord.id, uploadData);
+        } else {
+          res = await recordApi.addRecord(uploadData);
+        }
+        
         if (res.status === 200) {
-          message.success("添加成功!");
+          message.success(isEditMode ? "更新成功!" : "添加成功!");
           fetchPersonInfo && fetchPersonInfo(person_id);
           form.resetFields();
           setIsAdding(false);
@@ -89,10 +113,22 @@ const RecordForm = forwardRef<any, RecordFormProps>(
             fieldNames={{ label: "name", value: "id" }}
           ></Select>
         </Form.Item>
+        
+        <Form.Item
+          name="updatedAt"
+          label="记录日期"
+          rules={[{ required: true, message: "请选择记录日期" }]}
+        >
+          <DatePicker 
+            placeholder="选择记录日期"
+            style={{ width: '100%' }}
+            format="YYYY-MM-DD"
+          />
+        </Form.Item>
         <Form.Item {...tailLayout}>
           <Space>
             <Button type="primary" htmlType="submit">
-              提交
+              {isEditMode ? "更新" : "提交"}
             </Button>
             <Button htmlType="button" onClick={onCancel}>
               取消
